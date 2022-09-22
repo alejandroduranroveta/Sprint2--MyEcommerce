@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "email": "Juan@gmail.com",
+        "username": "juanPerez",
+        "password": "123456",
+        "firstname": "Juan",
+        "lastname": "Perez",
+        "profilepic": "https://ibb.co/zF5mrtX"
+    },
+    {
+        "id": 2,
+        "email": "Carlos@gmail.com",
+        "username": "carlitox",
+        "password": "123456",
+        "firstname": "Carlos",
+        "lastname": "Gonzalez",
+        "profilepic": "https://ibb.co/BVmwZdz"
+    },
+    {
+        "id": 3,
+        "email": "pablo@gmail.com",
+        "username": "Pablin123",
+        "password": "123456",
+        "firstname": "Pablo",
+        "lastname": "García",
+        "profilepic": "https://ibb.co/vD9Xxn5"
+    },
+    {
+        "id": 4,
+        "email": "Gimena2022@gmail.com",
+        "username": "iLoveDogs",
+        "password": "123456",
+        "firstname": "Gimena",
+        "lastname": "Chavez",
+        "profilepic": "https://ibb.co/3d6mSDw"
+    },
+    {
+        "id": 5,
+        "email": "Kmila47@gmail.com",
+        "username": "kamilaConK",
+        "password": "123456",
+        "firstname": "Camila",
+        "lastname": "Sánchez",
+        "profilepic": "https://ibb.co/jTFDfcR"
+    }
+]

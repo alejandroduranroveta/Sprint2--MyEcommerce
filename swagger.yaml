@@ -1,0 +1,651 @@
+openapi: 3.0.0
+info:
+  title: Mi ecommerce
+  version: 1.0.0
+  description: |-
+    Esta es la API de Mi ecommerce.
+    
+    Links:
+    - [Repositorio de Github](https://github.com/alejandroduranroveta/Proyecto-miEcommerce-3)
+  
+servers:
+  - url: http://localhost:3030/api/v1
+    description: Servidor de la api
+    
+tags:
+  - name: Login
+    description: Realizar el login para tener un token
+  - name: Usuario
+    description: Todos los endpoints de usuarios
+  - name: Productos
+    description: Todos los endpoints de productos
+  - name: Carritos
+    description: Todos los endpoint para carrito
+  - name: Pictures
+    description: Todos los endpoint para pictures
+
+  
+paths:
+  /users:
+    get:
+      tags: 
+        - Usuario
+      summary:  Recupera la lista de users. Responde con un array conteniendo todos los users del sistema..
+      security:
+        - bearerAuth: []
+      responses:
+        '200':    # status code
+          description: Un array de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Usuario'
+        '500':
+          description: Error del Servidor
+    post:
+      tags:
+        - Usuario
+      summary:  Crea un nuevo user. Debe recibir un body con la info del user a crear. Responde con la info completa del nuevo user.
+      security:
+        - bearerAuth: []      
+      requestBody:
+        description: Crea un nuevo user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Bad request
+        '500':
+          description: Error del servidor
+  /users/login:
+    post:
+      tags:
+        - Login
+      summary:  Ingresa las nombre de usuario y contraseña para adquirir el token     
+      requestBody:
+        description: Login
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: carlitox
+                password:
+                  type: string
+                  example: '123456'
+        required: true
+      responses:
+        '201':
+          description: Login correcto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Authorized
+                  user:
+                    type: object
+                    properties:
+                      iduser:
+                        type: number
+                        example: 3
+                      username:
+                        type: string
+                        example: waltermolina
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXN1bHQiOnsiaWR1c2VyIjozLCJ1c2VybmFtZSI6IndhbHRlcm1vbGluYUBtc24uY29tIn0sImlhdCI6MTY0OTAzMDcwMCwiZXhwIjoxNjQ5MDM0MzAwfQ.bUaOhRJJQc7sgMbar_Bwp_Ytj-ruLbkTB0Hdc-f0lNM
+        '400':
+          description: Bad request
+        '500':
+          description: Error del servidor
+  /users/{id}:
+    get:
+      tags: 
+        - Usuario
+      summary: Recupera el user con el id solicitado. Responde con la información completa del user con el id buscado.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del usuario a buscar
+      responses: 
+        '200':
+          description: El usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error del servidor
+    put:
+      tags:
+        - Usuario
+      summary: Actualiza el user identificado con id. Debe recibir un body con la info del user a modificar. Responde con la info completa del user modificado.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del usuario a editar     
+      requestBody:
+        description: Editar el usuario
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses: 
+        '200':
+          description: El usuario fue editado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Bad request
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error del servidor
+    delete:
+      tags:
+        - Usuario
+      summary: Eliminar el user identificado con id. Cuando se elimina un user, primero debe vaciarse su carrito (cart). 
+      security:
+        - bearerAuth: []         
+      requestBody:
+        description: Id del usuario a eliminar
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 2
+        required: true
+      responses: 
+        '200':
+          description: El usuario fue eliminado
+        '400':
+          description: Bad request
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error del servidor
+  /products:
+    get:
+      tags:
+        - Productos
+      summary: Recupera la lista de products. Responde con un array conteniendo todos los products del sistema.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          required: false
+          description: Si se desea filtrar por categoria          
+      responses:
+        '200':    # status code
+          description: Un array de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Producto'
+        '500':
+          description: Error del Servidor
+    post:
+      tags:
+        - Productos
+      summary:  Crea un nuevo producto. Debe recibir un body con la info del producto a crear. Responde con la info completa del producto.
+      security:
+        - bearerAuth: []          
+      requestBody:
+        description: Crea un nuevo producto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Producto'
+        required: true
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Bad request
+        '500':
+          description: Error del servidor
+  /products/{id}:
+    get:
+      tags: 
+        - Productos
+      summary: Recupera el producto con el id solicitado. Responde con la información completa del producto con el id buscado.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del producto a buscar
+      responses: 
+        '200':
+          description: El producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error del servidor
+    put:
+      tags:
+        - Productos
+      summary: Actualiza el producto identificado con id. Debe recibir un body con la info del producto a modificar. Responde con la info completa del producto modificado.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del producto a editar     
+      requestBody:
+        description: Editar el producto
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Producto'
+        required: true
+      responses: 
+        '200':
+          description: El producto fue editado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Bad request
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error del servidor
+    delete:
+      tags:
+        - Productos
+      summary: Eliminar el producto identificado con id. Cuando se elimina un producto, primero debe quitarse de todos los carritos, ademas de las imagenes. 
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del producto a eliminar
+      responses: 
+        '200':
+          description: El producto fue eliminado
+        '400':
+          description: Bad request
+        '404':
+          description: producto no encontrado
+        '500':
+          description: Error del servidor
+  /products/mostwanted:
+    get:
+      tags:
+        - Productos
+      summary: Recupera la lista de products. Responde con un array conteniendo todos los products del sistema que tengan el atributa most wanted en true.
+      security:
+        - bearerAuth: []          
+      responses:
+        '200':    # status code
+          description: Un array de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Producto'
+        '500':
+          description: Error del Servidor
+  /products/search?{q}:
+    get:
+      tags: 
+        - Productos
+      summary: Recupera los productos que contengan el palabra ingresada, tanto en su nombre, descripcion o categoria
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: String a buscar
+      responses: 
+        '200':
+          description: Los productos encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '500':
+          description: Error del servidor
+  /carts/{id}:
+    get:
+      tags:
+        - Carritos
+      summary: Recupera el cart del user identificado con id. Responde con un array conteniendo los products del user solicitado.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: El carrito encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error del servidor      
+    put:
+      tags:
+        - Carritos
+      summary: Actualiza el carrito identificado con id. Debe coincidir con el usuario actual
+      security:
+        - bearerAuth: [] 
+      requestBody:
+        description: Editar el carrito
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+        required: true
+      responses: 
+        '200':
+          description: El Carrito fue editado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Bad request
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error del servidor
+  /pictures:
+    post:
+      tags:
+        - Pictures
+      summary:  Crea ua nueva picture.
+      security:
+        - bearerAuth: []          
+      requestBody:
+        description: Crea una nueva picture
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Picture'
+        required: true
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Picture'
+        '400':
+          description: Bad request
+        '500':
+          description: Error del servidor
+
+  /pictures?product={product}:
+    get:
+      tags: 
+        - Pictures
+      summary: Recupera las imagenes de ese producto.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: product
+          schema:
+            type: number
+          required: true
+          description: Id del producto
+      responses: 
+        '200':
+          description: Las imagenes encontradas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Picture'
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error del servidor
+  /pictures/{id}:
+    get:
+      tags: 
+        - Pictures
+      summary: Recupera la imagen con ese id.
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id de la imagen
+      responses: 
+        '200':
+          description: La imagen encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Picture'
+        '404':
+          description: Producto no encontrado
+        '500':
+          description: Error del servidor
+    put:
+      tags:
+        - Pictures
+      summary: Actualiza la info de la imagen
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id  de la imagen   
+      requestBody:
+        description: Editar la imagen
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Picture'
+        required: true
+      responses: 
+        '200':
+          description: La imagen fue editada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Picture'
+        '400':
+          description: Bad request
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error del servidor
+    delete:
+      tags:
+        - Pictures
+      summary: Eliminar la picture con ese id
+      security:
+        - bearerAuth: []          
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id  de la imagen   
+      responses:
+        '200':
+          description: La picture fue eliminada
+        '400':
+          description: Bad request
+        '404':
+          description: Picture no encontrada
+        '500':
+          description: Error del servidor
+      
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        email:
+          type: string
+          example: ejemplo@email.com
+        username:
+          type: string
+          example: anon
+        password:
+          type: string
+          example: 12232dse
+        firstname:
+          type: string
+          example: Jefferson
+        lastName:
+          type: string
+          example: Gutierritos
+        profilepic:
+          type: string
+          example: shorturl.at/IJK45
+      xml:
+        name: usuarios
+    Producto:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        title: 
+          type: string
+          example: Manzanas rojas
+        price: 
+          type: number
+          example: 49
+        description:
+          type: string
+          example: Manzanas deliciosas y probablemente naturales
+        image:
+          type: string
+          example: shorturl.at/IJK45
+        gallery:
+          type: array
+          items:
+            type: object
+            properties:
+              picture_id: 
+                type: number
+                example: 1
+              picture_url:
+                type: string
+                example: shorturl.at/IJK45
+        category:
+          type: string
+          example: Fruta
+        mostwanted:
+          type: boolean
+          example: false
+        stock:
+          type: number
+          example: 0
+    Picture:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        url:
+          type: string
+          example: shorturl.at/IJK45
+        description:
+          type: string
+          example: Foto linda de una manzana
+    Cart:
+      type: object
+      properties:
+        user: 
+          type: number
+          example: 1
+        cart:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: number
+                example: 1
+              quantity:
+                type: number
+                example: 5
+        
+            

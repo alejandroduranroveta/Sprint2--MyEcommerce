@@ -1,0 +1,103 @@
+[
+
+    {
+        "id": 1,
+        "title": "Manzana roja",
+        "price": 60,
+        "description": "1Kg de manzana roja",
+        "image": "https://ibb.co/Z22rV34",
+        "gallery": [
+            {
+                "picture_id": 1,
+                "picture_url": "https://ibb.co/bgYzB19"
+            },
+            {
+                "picture_id": 2,
+                "picture_url": "https://ibb.co/DpB8HHp"
+            }
+        ],
+        "category": "Fruta",
+        "mostwanted": false,
+        "stock": 0
+    },
+    {
+        "id": 2,
+        "title": "Lechuga BuenaVida",
+        "price": 87,
+        "description": "Lechuga envasada 'BuenaVida'",
+        "image": "https://ibb.co/Sx3fjH2",
+        "gallery": [
+            {
+                "picture_id": 1,
+                "picture_url": "https://ibb.co/8zvwjyg"
+            },
+            {
+                "picture_id": 2,
+                "picture_url": "https://ibb.co/x1D01m2"
+            }
+        ],
+        "category": "Verdura",
+        "mostwanted": false,
+        "stock": 0
+    },
+    {
+        "id": 3,
+        "title": "Arbejas cololó",
+        "price": 87,
+        "description": "Lata de arvejas",
+        "image": "https://ibb.co/0Z4QQ7k",
+        "gallery": [
+            {
+                "picture_id": 1,
+                "picture_url": "https://ibb.co/Z1v9Bn7"
+            },
+            {
+                "picture_id": 2,
+                "picture_url": "https://ibb.co/d7WDt4P"
+            }
+        ],
+        "category": "Conservas",
+        "mostwanted": false,
+        "stock": 0
+    },
+    {
+        "id": 4,
+        "title": "Mouse USB",
+        "price": 990,
+        "description": "Mouse gammer Geniotech con rgb ",
+        "image": "https://ibb.co/tz1QSPm",
+        "gallery": [
+            {
+                "picture_id": 1,
+                "picture_url": "https://ibb.co/7kyLNQT"
+            },
+            {
+                "picture_id": 2,
+                "picture_url": "https://ibb.co/RNXLTCt"
+            }
+        ],
+        "category": "Computación",
+        "mostwanted": false,
+        "stock": 0
+    },
+    {
+        "id": 5,
+        "title": "Micrófono USB",
+        "price": 350,
+        "description": "Microfono de pie con conector USB-A, cable de 1.5mts",
+        "image": "https://ibb.co/DRknHrp",
+        "gallery": [
+            {
+                "picture_id": 1,
+                "picture_url": "https://ibb.co/Yt3LN3c"
+            },
+            {
+                "picture_id": 2,
+                "picture_url": "https://ibb.co/FgGX3w6"
+            }
+        ],
+        "category": "Computación",
+        "mostwanted": false,
+        "stock": 0
+    }
+]
