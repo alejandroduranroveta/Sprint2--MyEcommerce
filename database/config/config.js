@@ -5,7 +5,7 @@ module.exports ={
     "database": "sprint2",
     "host": "localhost",
     "dialect": "mysql",
-    "port": "3069"
+    "port": "3000"
   },
   "test": {
     "username": "root",
