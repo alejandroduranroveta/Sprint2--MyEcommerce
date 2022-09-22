@@ -1,11 +1,11 @@
 module.exports ={
   "development": {
     "username": "root",
-    "password": null,
+    "password": "",
     "database": "sprint2",
-    "host": "127.0.0.1",
+    "host": "localhost",
     "dialect": "mysql",
-    "port": 3069
+    "port": "3069"
   },
   "test": {
     "username": "root",
