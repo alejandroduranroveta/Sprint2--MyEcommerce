@@ -31,9 +31,12 @@ module.exports = (sequelize, DataTypes) => {
 
 
 	};
+	const config = {
+		timestamps: false
+	}
 
 
-	const User = sequelize.define(alias, cols);
+	const User = sequelize.define(alias, cols,config);
     
 	// Equipo.associate = (models) => {
 	// 	Equipo.hasMany(models.Persona, {
