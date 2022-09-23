@@ -21,7 +21,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 		const PORT = process.env.PORT;
 
-		sequelize.sync(/**{force: true} */).then(() => {
+sequelize.sync({/*alter: true*/}).then(() => {
 			console.log("sequelize iniciado");
 		}).catch(err => {console.log("error: " + err)});
 
