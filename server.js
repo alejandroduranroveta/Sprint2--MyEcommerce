@@ -14,10 +14,10 @@ app.use(express.json());
 
 require("dotenv").config();
 app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/carts", cartsRoutes);
-app.use("/api/v1/pictures", picturesRoutes);
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use("/api/v1/users", userRoutes);
+// app.use("/api/v1/carts", cartsRoutes);
+// app.use("/api/v1/pictures", picturesRoutes);
+// app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 		const PORT = process.env.PORT;
 
@@ -25,6 +25,6 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 			console.log("sequelize iniciado");
 		}).catch(err => {console.log("error al levantar el server en el puerto ")});
 
-		app.listen(PORT, () =>{
+		app.listen(5000, () =>{
 			console.log("Se levanto el server en el puerto " + PORT);
 		})

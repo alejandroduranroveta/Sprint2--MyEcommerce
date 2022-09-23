@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const alias = "products";
+	const alias = "Products";
 	const cols = {
 		id: {
 			type: DataTypes.INTEGER,
@@ -15,11 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
             allowNull: false,
 		},
-        img: {
-            type: DataTypes.STRING(255),
-            allowNull: false,
-            unique: true,
-        },
         price: {
             type: DataTypes.INTEGER,
             allowNull: false,
