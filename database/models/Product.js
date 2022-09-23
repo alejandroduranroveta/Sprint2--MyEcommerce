@@ -36,18 +36,9 @@ module.exports = (sequelize, DataTypes) => {
 
 	const Product = sequelize.define(alias, cols);
     
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
-
+	Product.associate = (models)=>{
+		Product.hasMany(models.pictures,{})
+		Product.belongsToMany(models.carts_has_products,{})
+	}
 	return Product;
 };
