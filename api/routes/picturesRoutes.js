@@ -6,7 +6,7 @@ const {detail,create,modify,deleted,picturesProduct} = require(path.resolve(__di
 
 router.get('/',picturesProduct) 
 router.get('/:id',detail)
-router.post('/',create) 
+router.post('/:id',create) 
 router.put('/:id',modify)
 router.delete('/:id',deleted)
 
