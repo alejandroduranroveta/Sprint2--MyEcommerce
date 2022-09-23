@@ -13,10 +13,10 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 app.use(express.json());
 
 require("dotenv").config();
-app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/carts", cartsRoutes);
-app.use("/api/v1/pictures", picturesRoutes);
+app.use("/api/v2/products", productRoutes);
+app.use("/api/v2/users", userRoutes);
+app.use("/api/v2/carts", cartsRoutes);
+app.use("/api/v2/pictures", picturesRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 		const PORT = process.env.PORT;
