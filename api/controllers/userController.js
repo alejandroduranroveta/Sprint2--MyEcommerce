@@ -76,21 +76,21 @@ const userController = {
 		try {
 			let {
 				email = "exaple@gmail.com",
-				username = "pepito",
+				name = "pepito",
 				password = "1234",
 				firtsname = "Anonymous",
 				lastname = "Anonymous",
-				profilepic = "www.img.com",
+				profile_pic = "www.img.com",
 				role = "Guest"
 			} = req.body;
 			
 			let newUser = {
 				email,
-				username,
+				name,
 				password,
 				firtsname,
 				lastname,
-				profilepic,
+				profile_pic,
 				role
 			};
 			db.users.create(newUser);
@@ -108,12 +108,25 @@ const userController = {
 		try {
 			let id = req.params.id;
 			if (id!==null) {
-				
+				let {
+					email,
+					username,
+					firtsname,
+					lastname,
+					profilepic,
+					role
+				} = req.body;
+				bd.user.update(
+
+				);
 			} else if(!isNaN(req.params.id)) {
 				res.status(404).json({ msg: "Not fund user" });
 			}else{
 				res.status(400).json({ msg: `${req.params.id} that is not a valid id, try with something else numerical`});
 			}
+
+
+
 			if (id) {
 				let bdUser = fs.readFileSync(
 					path.join(__dirname, "/../data/users.json"),
