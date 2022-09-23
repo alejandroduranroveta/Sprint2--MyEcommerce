@@ -1,3 +1,5 @@
+const Carts_has_product = require("./Carts_has_product");
+
 module.exports = (sequelize, DataTypes) => {
 	const alias = "carts";
 	const cols = {
@@ -21,10 +23,12 @@ module.exports = (sequelize, DataTypes) => {
 	const Cart = sequelize.define(alias, cols,extra);
     
 	Cart.associate = (models) => {
-		Cart.hasMany(models.carts_has_products, {
-			as: "carrito",
-			foreignKey: "carts_id",
+		Cart.hasOne(models.carts_has_products, {
+			foreignKey : 'carts_id'
 		});
+		Cart.belongsTo(models.users, {
+			foreignKey: "user_id"
+		})
 	};
     
 	return Cart;
