@@ -18,18 +18,27 @@ module.exports = (sequelize, DataTypes) => {
         add_date:{
             type: DataTypes.DATE,
             allowNull: false,
+            defaultValue: sequelize.NOW
         }
 
 	};
 
+    const config = {
+        timestamps : false,
+        createdAt: "add_date"
+    }
 
-	const Carts_has_product = sequelize.define(alias, cols);
+	const Carts_has_product = sequelize.define(alias, cols, config);
     
 	Carts_has_product.associate = (models) => {
-		Carts_has_product.BelongsTo(models.Cart, {
+		Carts_has_product.belongsTo(models.carts, {
 			as: "Carts_has_product",
 			foreignKey: "carts_id",
 		});
+        Carts_has_product.hasOne(models.products, {
+            foreignKey: "products_id",
+            as: "productos",
+        })
 	};
     
 	return Carts_has_product;

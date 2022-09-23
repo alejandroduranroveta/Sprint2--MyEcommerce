@@ -14,17 +14,16 @@ module.exports = (sequelize, DataTypes) => {
 
 	};
 	const extra = {
-        timestamps: true,
-        createdAt: false,
+        timestamps: false
     }
 
 
 	const Cart = sequelize.define(alias, cols,extra);
     
 	Cart.associate = (models) => {
-		Cart.hasMany(models.carts_has_product, {
+		Cart.hasMany(models.carts_has_products, {
 			as: "carrito",
-			foreignKey: "id",
+			foreignKey: "carts_id",
 		});
 	};
     
