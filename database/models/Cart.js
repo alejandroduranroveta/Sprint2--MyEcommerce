@@ -13,22 +13,20 @@ module.exports = (sequelize, DataTypes) => {
         }
 
 	};
+	const extra = {
+        timestamps: true,
+        createdAt: false,
+    }
 
 
-	const Cart = sequelize.define(alias, cols);
+	const Cart = sequelize.define(alias, cols,extra);
     
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
+	Cart.associate = (models) => {
+		Cart.hasMany(models.carts_has_product, {
+			as: "carrito",
+			foreignKey: "id",
+		});
+	};
     
 	return Cart;
 };

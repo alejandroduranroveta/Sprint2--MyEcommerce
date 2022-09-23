@@ -1,28 +1,26 @@
 const fs = require('fs');
 const path = require('path');
+const db = require('../../database/models')
 
 let responseSent = false;
 
+
+const createCart = userId => {
+    db.carts.create({
+        userId
+    }).then( r=> {
+        return r;
+    }).catch( err => console.log(err))
+
+    //falta chequear
+}
 const cartById = (req, res) => {
     const { id } = req.dataToken;
 
     try {
-        const dataToParse = fs.readFileSync(path.resolve(__dirname, '../data/carts.json'), 'utf-8');
-        const cart = JSON.parse(dataToParse);
-
-        if (!cart || id == 0) {
-            return res.status(404).json({
-                msg: "El carrito no existe"
-            })
-        }
-
-        if (id != cart.user) {
-            return res.status(403).json({
-                msg: 'Solo puede acceder a su propio carrito'
-            })
-        }
-
-        res.status(200).json(cart)
+        db.carts.findByPk(id).then(r => {
+            return res.status(200).json(r);
+        }).catch(err => console.log(err))
     } catch (error) {
         console.log(error);
         res.status(500).json({

@@ -25,18 +25,12 @@ module.exports = (sequelize, DataTypes) => {
 
 	const Carts_has_product = sequelize.define(alias, cols);
     
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
+	Carts_has_product.associate = (models) => {
+		Carts_has_product.BelongsTo(models.Cart, {
+			as: "Carts_has_product",
+			foreignKey: "carts_id",
+		});
+	};
     
 	return Carts_has_product;
 };
