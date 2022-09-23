@@ -26,19 +26,13 @@ module.exports = (sequelize, DataTypes) => {
 
 
 	const Picture = sequelize.define(alias, cols, config);
-    
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
+
+	Picture.associate = (models) => {
+		Picture.hasOne(models.products,{
+			foreignKey: 'product_id',
+			as: 'productPicture',
+		})
+	};
 
 	return Picture;
 };
