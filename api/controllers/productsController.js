@@ -5,73 +5,71 @@ const cartsController = require("./cartsController");
 const fs = require("fs");
 const path = require("path");
 
-let db = require(path.resolve('database/models/Product.js'))
+const db = require('../../database/models');
+const { NUMBER } = require("sequelize");
 
 
 const productsController = {
-  list: (req, res) => {
-    try {
-      if (req.query.category) {
-        //busqueda por categoria
-        const { category } = req.query;
-        const search = category.toLowerCase();
+  list: async (req, res) => {
+     try {
+  //     if (req.query.category) {
+  //       //busqueda por categoria
+  //       const { category } = req.query;
+  //       const search = category.toLowerCase();
 
-        let data = JSON.parse(
-          fs.readFileSync(
-            path.resolve(__dirname, "../data/products.json"),
-            "utf8"
-          )
-        );
-        let product = data.filter((el) => {
-          return el.category.toLowerCase().includes(search);
-        });
+  //       let data = JSON.parse(
+  //         fs.readFileSync(
+  //           path.resolve(__dirname, "../data/products.json"),
+  //           "utf8"
+  //         )
+  //       );
+  //       let product = data.filter((el) => {
+  //         return el.category.toLowerCase().includes(search);
+  //       });
 
-        if (!product) {
-          res.send(product);
-        }
-        return res.status(200).json(product);
-      }
-      //busqueda product
-      if (req.query.q) {
-        let { q } = req.query;
-        let search = q.toLowerCase();
-        const db = JSON.parse(
-          fs.readFileSync(
-            path.resolve(__dirname, "../data/products.json"),
-            "utf8"
-          )
-        );
-        let product = db.filter((p) => {
-          return (
-            p.title.toLowerCase().includes(search) ||
-            p.description.toLowerCase().includes(search) ||
-            p.category.toLowerCase().includes(search)
-          );
-        });
-        if (product.length == 0) {
-          return res.status(200).json({
-            msg: "No hay productos para su búsqueda",
-          });
-        }
-        return res.status(200).json(product);
-      }//listado de Productos 
+  //       if (!product) {
+  //         res.send(product);
+  //       }
+  //       return res.status(200).json(product);
+  //     }
+  //     //busqueda product
+  //     if (req.query.q) {
+  //       let { q } = req.query;
+  //       let search = q.toLowerCase();
+  //       const db = JSON.parse(
+  //         fs.readFileSync(
+  //           path.resolve(__dirname, "../data/products.json"),
+  //           "utf8"
+  //         )
+  //       );
+  //       let product = db.filter((p) => {
+  //         return (
+  //           p.title.toLowerCase().includes(search) ||
+  //           p.description.toLowerCase().includes(search) ||
+  //           p.category.toLowerCase().includes(search)
+  //         );
+  //       });
+  //       if (product.length == 0) {
+  //         return res.status(200).json({
+  //           msg: "No hay productos para su búsqueda",
+  //         });
+  //       }
+  //       return res.status(200).json(product);
+  //     }//listado de Productos 
 
-       else {
-        db.Productos.findAll()
-          .then(function(products){
-            return res.send('listProducts',{products:products})
+  //      else {
+          let list = await db.products.findAll()
+          res.status(200).json(list)
+
+  //       return res.status(200).json(db);
+  //     }
+        }catch (error){
+          console.log(error)
+          res.status(500).json({
+            msg:"Error Database"
           })
-
-
-        return res.status(200).json(db);
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        msg: "Server Error",
-      });
-    }
-  },
+        }
+  // },
 
 //   detail: (req, res) => {
 //     //Producto segun id
@@ -96,132 +94,88 @@ const productsController = {
 //         msg: "Server Error",
 //       });
 //     }
-//   },
-//   create: (req, res) => {
-//     //agregar un nuevo producto a la bd
-
-//     let {
-//       id,
-//       title = "",
-//       price = 0,
-//       description = "",
-//       image = "",
-//       gallery = [
-//         {
-//           picture_id: 1,
-//           picture_url: "" 
-//         }
-//       ],
-//       category = 0,
-//       mostwanted,
-//       stock,
-//     } = req.body;
-
-//     const condition = (!id || !title ||
-//     !price || !gallery[0].picture_id ||
-//     !gallery[0].picture_url);
-
-//     console.log(gallery[0].picture_id);
-//     if (condition) {
-//       return res.status(400).json({ msg: "Para crear el producto se necesitan mas datos"});
+      },
+  create:async (req, res) => {
+    //agregar un nuevo producto a la bd
+    let {title = "un Titulo",description = "unaDescr",price = 50,category_id =100, most_wanted = 0, stock = 1} = req.body;
+    if ((!title)||(!price)) {
+      return res.status(400).json({ msg: "Para crear el producto se necesitan mas datos"});
       
-//     } else {
-//       let newProduct = {
-//         id,
-//         title,
-//         price,
-//         description,
-//         image,
-//         gallery,
-//         category,
-//         mostwanted,
-//         stock,
-//       };
+    } else {
+      let newProduct = {
+        title,description,price,category_id,most_wanted,stock};
 
-//       try {
-//         const db = JSON.parse(
-//           fs.readFileSync(
-//             path.resolve(__dirname, "../data/products.json"),
-//             "utf8"
-//           )
-//         );
-//         db.push(newProduct);
-//         fs.writeFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           JSON.stringify(db)
-//         );
-//         res.status(200).json(newProduct);
-//       } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//           msg: "Server Error",
-//         });
-//       }
-//     }
-//   },
+      try {
+         await db.products.create(newProduct)
+          res.status(200).json(newProduct)
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({
+          msg: "Server Error",
+        });
+      }
+    }
+  },
+  modify:async (req, res) => {
+    try {
+      
+      
+      let searchById = await db.products.findByPk(req.params.id);
+      if (searchById!=null) {
+        let data = req.body;
+        data.id = req.params.id;
+        console.log(data.title)
+        if (data.title!=null) searchById.dataValues.title = data.title;
+        if (data.price!=null) searchById.dataValues.price = data.price;
+        if (data.description!=null) searchById.dataValues.description = data.description;
+        if (data.category!=null) searchById.dataValues.category_id = data.category;
+        if (data.mostwanted!=null) searchById.dataValues.most_wanted = data.mostwanted;
+        if (data.stock!=null) searchById.dataValues.stock = data.stock;
+        //console.log(searchById.dataValues.title)
+        await db.products.update({
+          title:searchById.dataValues.title,
+          price:searchById.dataValues.price,
+          description:searchById.dataValues.description,
+          category:searchById.dataValues.category_id,
+          mostwanted:searchById.dataValues.most_wanted,
+          stock:searchById.dataValues.stock},
+          {where:{id:data.id}})
 
-//   modify: (req, res) => {
-//     const id = req.params.id;
-//     console.log(id);
-//     try {
-//       const db = JSON.parse(
-//         fs.readFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           "utf8"
-//         )
-//       );
-//       let product = db.filter((el) => el.id == id);
-//       if (product) {
-//         let data = req.body;
-//         data.id = req.params.id;
-//         if (data.title) product[0].title = data.title;
-//         if (data.price) product[0].price = data.price;
-//         if (data.description) product[0].description = data.description;
-//         if (data.image) product[0].image = data.image;
-//         if (data.gallery.length > 0) product[0].gallery[0] = data.gallery;
-//         if (data.category) product[0].category = data.category;
-//         if (data.mostwanted) product[0].mostwanted = data.mostwanted;
-//         if (data.stock) product[0].stock = data.stock;
+        res.status(200).json(searchById);
+      } else {
+        return res.status(404).json({
+          msg: "Not found",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        msg: "Error",
+      });
+    }
+  },
+  mostwanted: (req, res) => {
+    console.log("entro por mostwanted");
+    try {
+      const db = JSON.parse(
+        fs.readFileSync(
+          path.resolve(__dirname, "../data/products.json"),
+          "utf8"
+        )
+      );
+      let products = db.filter((el) => el.mostwanted == true);
 
-//         fs.writeFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           JSON.stringify(db)
-//         );
-//         res.status(200).json(data);
-//       } else {
-//         return res.status(404).json({
-//           msg: "Not found",
-//         });
-//       }
-//     } catch (error) {
-//       res.status(500).json({
-//         msg: "Error",
-//       });
-//     }
-//   },
-//   mostwanted: (req, res) => {
-//     console.log("entro por mostwanted");
-//     try {
-//       const db = JSON.parse(
-//         fs.readFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           "utf8"
-//         )
-//       );
-//       let products = db.filter((el) => el.mostwanted == true);
-
-//       if (products.length == 0) {
-//         res.send("No se encuentran resultados");
-//       } else {
-//         res.status(200).json(products);
-//       }
-//     } catch (error) {
-//       console.log(error);
-//       res.status(500).json({
-//         msg: "Server Error",
-//       });
-//     }
-//   },
+      if (products.length == 0) {
+        res.send("No se encuentran resultados");
+      } else {
+        res.status(200).json(products);
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        msg: "Server Error",
+      });
+    }
+  },
 
 //   deleted: (req, res) => {
 //     const { id } = req.params;

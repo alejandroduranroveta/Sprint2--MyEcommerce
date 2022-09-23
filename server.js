@@ -21,10 +21,10 @@ app.use("/api/v1/products", productRoutes);
 
 		const PORT = process.env.PORT;
 
-		sequelize.sync(/**{force: true} */).then(() => {
+		sequelize.sync(/*{alter: true}*/ ).then(() => {
 			console.log("sequelize iniciado");
 		}).catch(err => {console.log("error: " + err)});
 
-		app.listen(5000, () =>{
+		app.listen(PORT, () =>{
 			console.log("Se levanto el server en el puerto " + PORT);
 		})
