@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const db = require('../../database/models');
 
 const picturesController = {
   detail: (req, res) => {
@@ -28,6 +29,25 @@ const picturesController = {
   },
   create: (req, res) => {
     //agregar una nueva imagen a la bd
+    //sprint 2
+    try{
+      const picture = await db.picture.create({
+          title: req.body.title,
+          description: req.body.description,
+          genre: req.body.genre,
+          rating: req.body.rating,
+          awards: req.body.awards,
+          length: req.body.length,
+          genre_id: req.body.genre_id,
+          release_date: req.body.release_date,
+      });
+      res.send(movies);
+  }catch(error) {
+      console.log(error);
+      res.send(error);
+  }
+
+  //////sprint 1
 
     let { id, url = "", description = "" } = req.body;
 
