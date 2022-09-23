@@ -21,7 +21,7 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 		const PORT = process.env.PORT;
 
-		sequelize.authenticate().then(() => {
+		sequelize.sync({force: false}).then(() => {
 			console.log("sequelize iniciado");
 		}).catch(err => {console.log("error al levantar el server en el puerto ")});
 
