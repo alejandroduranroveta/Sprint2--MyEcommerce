@@ -14,14 +14,18 @@ module.exports = (sequelize, DataTypes) => {
         description: {
             type: DataTypes.STRING,
         },
-        gallery_id:{
-            type: DataTypes.INTEGER,
+		product_id:{
+			type: DataTypes.INTEGER,
             allowNull: false,
-        }
+		}
 	};
 
+	const config = {
+		timestamps: false
+	}
 
-	const Picture = sequelize.define(alias, cols);
+
+	const Picture = sequelize.define(alias, cols, config);
     
 	// Equipo.associate = (models) => {
 	// 	Equipo.hasMany(models.Persona, {

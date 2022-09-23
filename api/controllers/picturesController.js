@@ -1,166 +1,164 @@
 const fs = require("fs");
-const { resolve } = require("path");
 const path = require("path");
 const db = require("../../database/models");
 
 const picturesController = {
-	detail: (req, res) => {
-		//picture segun id
-		//sprint 2
-		const product_id = req.params.product_id;
+	detail: async (req, res) => {
+		//detalle de picture por id
+		try {
+			const id = req.params.id;
+			if (isNaN(id)) {
+				return res.status(400).json({ msg: "el id debe ser un número" });
+			}
 
-		db.product
-			.findAll(
+			const pic = await db.pictures.findByPk(id);
+
+			if (!pic) {
+				return res.status(404).json({ msg: "no hay picture con esa id" });
+			} else {
+				return res.status(200).json({ pic });
+			}
+		} catch (error) {
+			console.log(error);
+			return res.status(500).json({ error });
+		}
+	},
+
+	create: async (req, res) => {
+		//agregar una nueva imagen a la bd
+		try {
+			const { img, description } = req.body;
+			const product_id = req.params.id;
+			if (!img) {
+				res.status(400).json({ msg: "La url de la imagen es obligatorio" });
+			}
+			if (isNaN(product_id) || product_id <= 0) {
+				return res.status(400).json({ msg: "el id debe ser un número válido" });
+			}
+
+			const pic = await db.pictures.create({
+				img,
+				description,
+				product_id,
+			});
+
+			res.status(201).json({ pic });
+		} catch (error) {
+			return res.status(500).json({ msg: "error al crear imagen", error });
+		}
+	},
+
+	modify: async (req, res) => {
+		// modificar pictures sprint 2
+
+		try {
+			const id = req.params.id;
+			if (isNaN(id)) {
+				return res.status(400).json({ msg: "el id debe ser un número" });
+			}
+
+			const { img, description, product_id } = req.body;
+
+			if (!img) {
+				return res.status(400).json({ msg: "es obligatorio ingresar url de imagen" });
+			}
+			if (!product_id) {
+				return res.status(400).json({
+					msg: "es obligatorio el id de producto asociado a la imagen",
+				});
+			}
+
+			const picMod = await db.pictures.update(
 				{
-					attributes: ["img", "description"],
+					img,
+					description,
+					product_id,
 				},
 				{
 					where: {
-						product_id,
+						id,
 					},
 				}
-			)
-			.then((result) => {
-				console.log(result);
-				return res.send(result);
-			})
-			.catch((error) => {
-				console.log(error);
-				return res.send("no existe ninguna imagen para ese producto");
-			});
-	},
+			);
 
-	create: (req, res) => {
-		//agregar una nueva imagen a la bd
-		//sprint 2
-		const { img, description } = req.body;
-
-		if (!img) {
-			res.send("La url de la imagen es obligatorio");
-		}
-
-    let product_id;
-		try {
-			product_id = Number(req.params.product_id);
+			return (picMod != 0) ? res.status(200).json({
+						img,
+						description,
+						product_id,
+				  })
+				: res.status(400).json({
+						msg: "Ninguna imagen fue modificada. compruebe que el id sea correcto",
+				  });
 		} catch (error) {
-      console.log(error);
-			return res.send("el id debe ser un número");
+			return res.status(500).json({ msg: "error al modificar imagen", error });
 		}
-
-		db.picture
-			.create({
-				id: "default",
-				img,
-				description,
-        product_id
-			})
-			.then(() => {
-				res.send("Imagen creada con éxito.");
-			})
-			.catch((err) => {
-				res.send("error al crear imagen");
-				console.log(err);
-			});
 	},
 
-	modify: (req, res) => {
-    // modificar pictures sprint 2
-      const id = req.params.id;
-
-
-    //modificar pictures sprint 1
-		//const id = req.params.id;
+	deleted: async (req, res) => {
 		try {
-			const db = JSON.parse(
-				fs.readFileSync(
-					path.resolve(__dirname, "../data/pictures.json"),
-					"utf8"
-				)
-			);
-			let picture = db.filter((el) => el.id == id);
-			if (picture) {
-				let data = req.body;
-				data.id = req.params.id;
-				if (data.url) picture[0].url = data.url;
-				if (data.description) picture[0].description = data.description;
+			const id = req.params.id;
 
-				fs.writeFileSync(
-					path.resolve(__dirname, "../data/pictures.json"),
-					JSON.stringify(db)
-				);
-				res.status(200).json(data);
-			} else {
-				return res.status(404).json({
-					status: "error",
-					msg: "Imagen no encontrada",
-				});
-			}
+			const picDel = await db.pictures.destroy({
+				where: {
+					id,
+				},
+			});
+
+			return res.status(200).json({ picDel }); //muestro la imagen eliminada
 		} catch (error) {
-			res.status(500).json({
-				status: "Error",
-				msg: "Error en el servidor",
+			return res.status(500).json({
+				msg: "error al modificar imagen",
+				error,
 			});
 		}
 	},
-	deleted: (req, res) => {
-		const { id } = req.params;
+  
+
+	picturesProduct: async (req, res) => {
+
+  //por ruta products/id/pictures
+    const id = req.params.id;
+    if(id){ 
+    if (isNaN(id)) {
+      return res.status(400).json({ msg: "el id debe ser un número" });
+    }
+
 		try {
-			const db = JSON.parse(
-				fs.readFileSync(
-					path.resolve(__dirname, "../data/pictures.json"),
-					"utf8"
-				)
-			);
-			const pictureDeleted = db.find((el) => el.id === Number(id));
-			const newData = db.filter((el) => el.id !== Number(id));
-			fs.writeFileSync(
-				path.resolve(__dirname, "../data/pictures.json"),
-				JSON.stringify(newData)
-			);
-			return pictureDeleted
-				? res.status(200).json(pictureDeleted)
-				: res.status(404).json({ msg: "Imagen no encontrada" });
+			const pics = await db.pictures.findAll({
+				attributes: ["img", "description", "product_id"],
+				where: {
+					product_id: id,
+				},
+			});
+			return res.status(200).json({ pics }); //devuelve todas las imagenes pertenecientes a un producto
+
 		} catch (error) {
-			console.log(error);
-			res.status(500).json({
-				msg: "Error",
-			});
+			return res.status(500).json({ error });
 		}
-	},
-	picturesProduct: (req, res) => {
-		try {
-			let data = JSON.parse(
-				fs.readFileSync(
-					path.resolve(__dirname, "../data/products.json"),
-					"utf8"
-				)
-			);
-			//products/id/pictures
-			let dataToShow;
-			if (req.params.id) {
-				const { id } = req.params;
-				dataToShow = data.find((elm) => elm.id === Number(id));
+  }
+
+
+  //busqueda por ?product=id
+    const product_id = req.query.product;
+    if(product_id){ // si recibe algo por query
+      if (isNaN(product_id)) {
+				return res.status(400).json({ msg: "el id debe ser un número" });
 			}
 
-			if (req.query.product) {
-				//busqueda por ?product=id
-				const { product: queryID } = req.query;
-				dataToShow = data.find((elm) => elm.id === Number(queryID));
-			}
+      try {
+        const pics = await db.pictures.findAll({
+          attributes: ["img", "description", "product_id"],
+          where: {
+            product_id
+          },
+        });
+        return res.status(200).json({ pics }); //devuelve todas las imagenes pertenecientes a un producto
+  
+      } catch (error) {
+        return res.status(500).json({ error });
+      }
+    }
+  }
 
-			if (dataToShow) {
-				return res.status(200).json(dataToShow["gallery"]);
-			} else {
-				return res.status(404).json({
-					msg: "Producto no encontrado",
-				});
-			}
-		} catch (error) {
-			console.log(error);
-			res.status(500).json({
-				msg: "Server Error",
-			});
-		}
-	},
 };
 module.exports = picturesController;
