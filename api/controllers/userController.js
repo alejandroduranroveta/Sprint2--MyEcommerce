@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const generateJWT = require('../helpers/generateJWT');
+
+const  db  = require("../../database/models");
 
 
 const userController = {
@@ -37,15 +38,17 @@ const userController = {
 		}
 
 	},
-	list: (req, res) => {
+	list: async(req, res) => {
 		try {
-			const bdUser = fs.readFileSync(
-				path.join(__dirname, "/../data/users.json"),
-				"utf-8"
-			);
-			const users = JSON.parse(bdUser);
-			users.map(user=>delete(user.password));
-			res.status(200).json(users);
+			// const bdUser = fs.readFileSync(
+			// 	path.join(__dirname, "/../data/users.json"),
+			// 	"utf-8"
+			// );
+			// const users = JSON.parse(bdUser);
+			// users.map(user=>delete(user.password));
+			// res.status(200).json(users);
+			const list = await db.users.findAll();
+			res.status(200).json(list);
 		} catch (error) {
 			console.log(error);
 			res.status(500).json({
