@@ -1,44 +1,47 @@
 const fs = require("fs");
 const path = require("path");
 
-const  db  = require("../../database/models");
-
+const db = require("../../database/models");
 
 const userController = {
-	login: async (req,res) => {
+	login: async (req, res) => {
 		try {
-			const emptyCart = require('../helpers/emptyCart_Login');
-			const {username, password} = req.body;
-			const bdUser = fs.readFileSync(path.join(__dirname, "/../data/users.json"),"utf-8");
+			const emptyCart = require("../helpers/emptyCart_Login");
+			const { username, password } = req.body;
+			const bdUser = fs.readFileSync(
+				path.join(__dirname, "/../data/users.json"),
+				"utf-8"
+			);
 			const users = JSON.parse(bdUser);
-			let user = users.find(user => user.username == username && user.password == password);
-			if(user){
-				delete(user.password);
-				const token = await generateJWT (user)
+			let user = users.find(
+				(user) => user.username == username && user.password == password
+			);
+			if (user) {
+				delete user.password;
+				const token = await generateJWT(user);
 				emptyCart(user.id);
 				return res.status(200).json({
-						success: true,
-						message: "Authorized",
-						user: {
+					success: true,
+					message: "Authorized",
+					user: {
 						iduser: user.id,
-						username: user.username
-						},
-						token				
-					});
-			}else{
+						username: user.username,
+					},
+					token,
+				});
+			} else {
 				return res.status(401).json({
-					msg: "Error en credenciales"
-				})
+					msg: "Error en credenciales",
+				});
 			}
 		} catch (error) {
-			return res.status(500).json({ 
-				msg: 'ok',
-				error
+			return res.status(500).json({
+				msg: "ok",
+				error,
 			});
 		}
-
 	},
-	list: async(req, res) => {
+	list: async (req, res) => {
 		try {
 			const list = await db.users.findAll();
 			res.status(200).json(list);
@@ -52,24 +55,28 @@ const userController = {
 	searchById: async (req, res) => {
 		try {
 			const searchById = await db.users.findByPk(req.params.id);
-			if (searchById!=null) {
-				let {id,email,name,profile_pic,role} =  searchById;
-			const user = {
-				id,
-				name,
-				email,
-                profile_pic,
-                role
-			}
-			res.status(200).json(user);
-			} else if(!isNaN(req.params.id)) {
+			if (searchById != null) {
+				let { id, email, name, profile_pic, role } = searchById;
+				const user = {
+					id,
+					name,
+					email,
+					profile_pic,
+					role,
+				};
+				res.status(200).json(user);
+			} else if (!isNaN(req.params.id)) {
 				res.status(404).json({ msg: "Not fund user" });
-			}else{
-				res.status(400).json({ msg: `${req.params.id} that is not a valid id, try with something else numerical`});
+			} else {
+				res
+					.status(400)
+					.json({
+						msg: `${req.params.id} that is not a valid id, try with something else numerical`,
+					});
 			}
 		} catch (error) {
 			console.log(error);
-			res.status(500).json({ msg: "Error server:"});
+			res.status(500).json({ msg: "Error server:" });
 		}
 	},
 	createUser: async (req, res) => {
@@ -81,9 +88,9 @@ const userController = {
 				firtsname = "Anonymous",
 				lastname = "Anonymous",
 				profile_pic = "www.img.com",
-				role = "Guest"
+				role = "Guest",
 			} = req.body;
-			
+
 			let newUser = {
 				email,
 				name,
@@ -91,7 +98,7 @@ const userController = {
 				firtsname,
 				lastname,
 				profile_pic,
-				role
+				role,
 			};
 			db.users.create(newUser);
 			req.method === "POST"
@@ -106,50 +113,37 @@ const userController = {
 	},
 	modifyUser: async (req, res) => {
 		try {
-			let id = req.params.id;
-			if (id!==null) {
-				let {
+			let idUser = req.params.id;
+			if (idUser !== null) {
+				const searchById = await db.users.findByPk(idUser);
+				let {id,
 					email,
 					username,
-					firtsname,
-					lastname,
-					profilepic,
-					role
-				} = req.body;
-				bd.user.update(
-
-				);
-			} else if(!isNaN(req.params.id)) {
+					firts_name,
+					last_name,
+					profile_pic,
+					role,
+					password} = searchById;
+				let newUser = {
+					id,
+					email,
+					username,
+					firts_name,
+					last_name,
+					profile_pic,
+					role,
+					password
+				};
+				await db.users.update(newUser, { where: { id: idUser } });
+				res.json(newUser);
+			} else if (!isNaN(req.params.id)) {
 				res.status(404).json({ msg: "Not fund user" });
-			}else{
-				res.status(400).json({ msg: `${req.params.id} that is not a valid id, try with something else numerical`});
-			}
-
-
-
-			if (id) {
-				let bdUser = fs.readFileSync(
-					path.join(__dirname, "/../data/users.json"),
-					"utf-8"
-				);
-				let users = JSON.parse(bdUser);
-				let usuariAmodificar = req.body;
-				let usersAux = users.find((e) => e.id === Number(id));
-				if (usersAux) {
-					usersAux = users.filter((e) => e.id !== Number(id));
-				} else {
-					return res.status(404).json({
-						msg: 'Usuario no encontrado'
-					});
-				}
-				usersAux.push(usuariAmodificar);
-				bdUser = fs.writeFileSync(
-					path.join(__dirname, "/../data/users.json"),
-					JSON.stringify(usersAux)
-				);
-				res.status(200).json({ usuariAmodificar });
 			} else {
-				return res.status(400);
+				res
+					.status(400)
+					.json({
+						msg: `${req.params.id} that is not a valid id, try with something else numerical`,
+					});
 			}
 		} catch (error) {
 			console.log(error);

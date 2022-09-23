@@ -11,11 +11,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         }
-
+		
 	};
+	const config = {
+        tableName: alias,
+        timestamps: false
+    }
 
-
-	const Gallery = sequelize.define(alias, cols);
+	const Gallery = sequelize.define(alias, cols,config);
     
 	// Equipo.associate = (models) => {
 	// 	Equipo.hasMany(models.Persona, {

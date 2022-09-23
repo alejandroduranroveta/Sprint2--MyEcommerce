@@ -13,9 +13,13 @@ module.exports = (sequelize, DataTypes) => {
             uniquer: true
         }
 	};
+	const config = {
+        tableName: alias,
+        timestamps: false
+    }
 
 
-	const Category = sequelize.define(alias, cols);
+	const Category = sequelize.define(alias, cols,config);
     
 	// Equipo.associate = (models) => {
 	// 	Equipo.hasMany(models.Persona, {
