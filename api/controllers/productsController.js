@@ -69,31 +69,19 @@ const productsController = {
             msg:"Error Database"
           })
         }
-  // },
+  },
 
-//   detail: (req, res) => {
-//     //Producto segun id
-//     const id = req.params.id;
-//     try {
-//       const db = JSON.parse(
-//         fs.readFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           "utf8"
-//         )
-//       );
-//       const dataToShow = db.find((elm) => elm.id === Number(id));
-
-//       if (!dataToShow) {
-//         return res.status(404).json({
-//           msg: "Not found",
-//         });
-//       }
-//       res.send(dataToShow);
-//     } catch (error) {
-//       res.status(500).json({
-//         msg: "Server Error",
-//       });
-//     }
+  detail:async (req, res) => {
+    //Producto segun id
+    
+    try {
+      let searchById = await db.products.findByPk(req.params.id);
+      res.send(searchById.dataValues);
+    } catch (error) {
+      res.status(401).json({
+        msg: "Not found product",
+      });
+    }
       },
   create:async (req, res) => {
     //agregar un nuevo producto a la bd
@@ -116,37 +104,42 @@ const productsController = {
       }
     }
   },
-  modify:async (req, res) => {
+  modify:async(req, res) => {
+    
     try {
+      id = req.params.id
+       await db.products.update({
+        title: req.body.title},
+        // title:searchById.dataValues.title,
+        // price:searchById.dataValues.price,
+        // description:searchById.dataValues.description,
+        // category:searchById.dataValues.category_id,
+        // mostwanted:searchById.dataValues.most_wanted,
+        // stock:searchById.dataValues.stock},
+        {where:{id:id}})
+      res.send('retorno')
+      //let searchById = await db.products.findByPk(req.params.id);
+      // if (searchById!=null) {
+      //   let data = req.body;
+      //   data.id = req.params.id;
       
-      
-      let searchById = await db.products.findByPk(req.params.id);
-      if (searchById!=null) {
-        let data = req.body;
-        data.id = req.params.id;
-        console.log(data.title)
-        if (data.title!=null) searchById.dataValues.title = data.title;
-        if (data.price!=null) searchById.dataValues.price = data.price;
-        if (data.description!=null) searchById.dataValues.description = data.description;
-        if (data.category!=null) searchById.dataValues.category_id = data.category;
-        if (data.mostwanted!=null) searchById.dataValues.most_wanted = data.mostwanted;
-        if (data.stock!=null) searchById.dataValues.stock = data.stock;
+        //if (!data.title) searchById.dataValues.title = data.title;
+        //if (data.price) searchById.dataValues.price = data.price;
+        //if (data.description) searchById.dataValues.description = data.description;
+        //if (data.category) searchById.dataValues.category_id = data.category;
+        ///if (data.mostwanted) searchById.dataValues.most_wanted = data.mostwanted;
+        //if (data.stock) searchById.dataValues.stock = data.stock;
         //console.log(searchById.dataValues.title)
-        await db.products.update({
-          title:searchById.dataValues.title,
-          price:searchById.dataValues.price,
-          description:searchById.dataValues.description,
-          category:searchById.dataValues.category_id,
-          mostwanted:searchById.dataValues.most_wanted,
-          stock:searchById.dataValues.stock},
-          {where:{id:data.id}})
+        //console.log(data.title + 'titulobody')
 
-        res.status(200).json(searchById);
-      } else {
-        return res.status(404).json({
-          msg: "Not found",
-        });
-      }
+
+
+        res.status(200).json(req.body);
+      // } else {
+      //   return res.status(404).json({
+      //     msg: "Not found",
+      //   });
+      // }
     } catch (error) {
       res.status(500).json({
         msg: "Error",
@@ -177,31 +170,31 @@ const productsController = {
     }
   },
 
-//   deleted: (req, res) => {
-//     const { id } = req.params;
+  deleted: (req, res) => {
+    const { id } = req.params;
 
-//     try {
-//       const db = JSON.parse(
-//         fs.readFileSync(
-//           path.resolve(__dirname, "../data/products.json"),
-//           "utf8"
-//         )
-//       );
-//       const deletedProduct = db.find((p) => p.id == id);
-//       const newData = db.filter((el) => el.id != Number(id));
-//       fs.writeFileSync(
-//         path.resolve(__dirname, "../data/products.json"),
-//         JSON.stringify(newData)
-//       );
-//       cartsController.removeProductFromCart(id);
-//       return res.status(200).json(deletedProduct);
-//     } catch (error) {
-//       console.log(error);
-//       res.status(500).json({
-//         msg: "Server Error",
-//       });
-//     }
-//   },
-// };
-}
+    try {
+      const db = JSON.parse(
+        fs.readFileSync(
+          path.resolve(__dirname, "../data/products.json"),
+          "utf8"
+        )
+      );
+      const deletedProduct = db.find((p) => p.id == id);
+      const newData = db.filter((el) => el.id != Number(id));
+      fs.writeFileSync(
+        path.resolve(__dirname, "../data/products.json"),
+        JSON.stringify(newData)
+      );
+      cartsController.removeProductFromCart(id);
+      return res.status(200).json(deletedProduct);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        msg: "Server Error",
+      });
+    }
+  }
+};
+
 module.exports = productsController;
