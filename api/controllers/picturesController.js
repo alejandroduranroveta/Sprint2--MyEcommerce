@@ -6,19 +6,19 @@ const picturesController = {
     try {
       const id = req.params.id;
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "el id debe ser un número válido" });
+        return res.status(400).json({ msg: "El id debe ser un número válido." });
       }
 
       const pic = await db.pictures.findByPk(id);
 
       if (!pic) {
-        return res.status(404).json({ msg: "no hay ninguna picture con esa id" });
+        return res.status(404).json({ msg: "No hay ninguna imágen con esa id." });
       } else {
-        return res.status(200).json({ msg: "imagen encontrada: ", pic });
+        return res.status(200).json({ msg: "Imágen encontrada: ", pic });
       }
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ msg: "error interno al intentar buscar imagen", error });
+      return res.status(500).json({ msg: "Error interno al intentar buscar imágen.", error });
     }
   },
 
@@ -27,10 +27,10 @@ const picturesController = {
     try {
       const { img, description, product_id } = req.body;
       if (!img) {
-        res.status(400).json({ msg: "La url de la imagen es obligatorio" });
+        res.status(400).json({ msg: "La url de la imágen es obligatorio." });
       }
       if (isNaN(product_id) || product_id <= 0) {
-        return res.status(400).json({ msg: "falta product_id o debe ser un número válido" });
+        return res.status(400).json({ msg: "Falta 'product_id' o debe ser un número válido." });
       }
 
       const pic = await db.pictures.create({
@@ -46,7 +46,7 @@ const picturesController = {
         msg: "Error inesperado al crear imagen"});
 
     } catch (error) {
-      return res.status(500).json({ msg: "error al crear imagen", error });
+      return res.status(500).json({ msg: "Error interno al intentar crear imagen", error });
     }
   },
 
@@ -61,10 +61,10 @@ const picturesController = {
       const { img, description, product_id } = req.body;
 
       if (!img) {
-        return res.status(400).json({ msg: "es obligatorio ingresar url de imagen" });
+        return res.status(400).json({ msg: "Es obligatorio ingresar la url de la imágen" });
       }
       if (!product_id) {
-        return res.status(400).json({msg: "es obligatorio el id de producto asociado a la imagen"});
+        return res.status(400).json({msg: "Es obligatorio el id de producto asociado a la imágen."});
       }
 
       const picMod = await db.pictures.update(
@@ -81,15 +81,15 @@ const picturesController = {
       );
 
       return (picMod != 0) ? res.status(200).json({
-        msg: "Imagen modificada correctamente",
+        msg: "Imágen modificada correctamente.",
         img,
         description,
         product_id,
       }) : res.status(400).json({
-        msg: "Ninguna imagen fue modificada. compruebe que el id sea correcto"});
+        msg: "Ninguna imágen fue modificada, compruebe que el id sea correcto."});
 
     } catch (error) {
-      return res.status(500).json({ msg: "error al modificar imagen", error });
+      return res.status(500).json({ msg: "Error interno al intentar modificar imágen.", error });
     }
   },
 
@@ -104,15 +104,13 @@ const picturesController = {
       });
 
       return (picDel != 0) ? res.status(200).json({
-        msg: "Imagen eliminada correctamente.",
+        msg: "Imágen eliminada correctamente.",
         picDel
-      }) : res.status(400).json({
-        msg: "No se pudo eliminar la imagen"
-      });
+      }) : res.status(400).json({ msg: "No se pudo eliminar la imágen."});
 
     } catch (error) {
       return res.status(500).json({
-        msg: "error al eliminar la imagen",
+        msg: "Error interno al intentar eliminar la imágen.",
         error,
       });
     }
@@ -122,8 +120,8 @@ const picturesController = {
     // listar imagenes asociadas a un id de producto por ruta '/products/:id/pictures'
     const id = req.params.id;
     if (id) {
-      if (isNaN(id)) {
-        return res.status(400).json({ msg: "el id debe ser un número" });
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ msg: "El id debe ser un número válido." });
       }
 
       try {
@@ -134,10 +132,10 @@ const picturesController = {
           },
         });
 
-        return res.status(200).json({ msg: "Imagenes encontradas:", pics });
+        return res.status(200).json({ msg: "Imágenes encontradas:", pics });
 
       } catch (error) {
-        return res.status(500).json({ msg: "Error interno al listar imágenes", error });
+        return res.status(500).json({ msg: "Error interno al intentar listar imágenes.", error });
       }
     }
 
@@ -145,8 +143,8 @@ const picturesController = {
     //busqueda por query 'products/?product_id=id'
     const product_id = req.query.product;
     if (product_id) {
-      if (isNaN(product_id)) {
-        return res.status(400).json({ msg: "el id debe ser un número" });
+      if (isNaN(product_id) || id <= 0) {
+        return res.status(400).json({ msg: "El id debe ser un número válido." });
       }
 
       try {
@@ -159,7 +157,7 @@ const picturesController = {
         return res.status(200).json({ msg: "Imágenes encontradas:", pics });
 
       } catch (error) {
-        return res.status(500).json({ msg: "Error interno al listar imágenes", error });
+        return res.status(500).json({ msg: "Error interno al listar imágenes.", error });
       }
     }
   }
