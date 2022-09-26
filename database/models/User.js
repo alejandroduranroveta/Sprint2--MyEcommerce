@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true,
         },
-        name:{
+        first_name:{
             type: DataTypes.STRING(255),
             allowNull: false,
         },
@@ -27,9 +27,14 @@ module.exports = (sequelize, DataTypes) => {
         role:{
             type: DataTypes.STRING(255),
             allowNull: false,
+        },
+		last_name:{
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },username:{
+            type: DataTypes.STRING(255),
+            allowNull: false,
         }
-
-
 	};
 	const config = {
 		timestamps: false

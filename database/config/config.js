@@ -6,7 +6,7 @@ module.exports ={
     "host": "localhost",
     "dialect": "mysql",
     "port": "3000",
-    "logging" : false
+    "logging": false
   },
   "test": {
     "username": "root",
