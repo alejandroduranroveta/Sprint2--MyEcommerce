@@ -1,5 +1,5 @@
 const express = require("express");
-const { sequelize } = require('./database/models');
+const { sequelize } = require("./database/models");
 const app = express();
 const productRoutes = require("./api/routes/productRoutes.js");
 const userRoutes = require("./api/routes/userRoutes");
@@ -13,18 +13,24 @@ const swaggerDocument = YAML.load("./swagger.yaml");
 app.use(express.json());
 
 require("dotenv").config();
-app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/carts", cartsRoutes);
-app.use("/api/v1/pictures", picturesRoutes);
+app.use("/api/v2/products", productRoutes);
+app.use("/api/v2/users", userRoutes);
+app.use("/api/v2/carts", cartsRoutes);
+app.use("/api/v2/pictures", picturesRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-		const PORT = process.env.PORT;
+const PORT = process.env.PORT;
+sequelize
+	.sync({
+		/*alter: true*/
+	})
+	.then(() => {
+		console.log("sequelize iniciado");
+	})
+	.catch((err) => {
+		console.log("error: " + err);
+	});
 
-sequelize.sync({/*alter: true*/}).then(() => {
-			console.log("sequelize iniciado");
-		}).catch(err => {console.log("error: " + err)});
-
-		app.listen(PORT, () =>{
-			console.log("Se levanto el server en el puerto " + PORT);
-		})
+app.listen(PORT, () => {
+	console.log("Se levanto el server en el puerto " + PORT);
+});

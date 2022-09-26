@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const alias = "category";
+	const alias = "gallery";
 	const cols = {
 		id: {
 			type: DataTypes.INTEGER,
@@ -7,17 +7,18 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			autoIncrement: true,
 		},
-        name:{
-            type: DataTypes.STRING(255),
+        product_id:{
+            type: DataTypes.INTEGER,
             allowNull: false,
-            uniquer: true
         }
+		
 	};
 	const config = {
         tableName: alias,
         timestamps: false
     }
-	const Category = sequelize.define(alias, cols,config);
+
+	const Gallery = sequelize.define(alias, cols,config);
     
 	// Equipo.associate = (models) => {
 	// 	Equipo.hasMany(models.Persona, {
@@ -32,5 +33,5 @@ module.exports = (sequelize, DataTypes) => {
 	// 	});
 	// };
     
-	return Category;
+	return Gallery;
 };
