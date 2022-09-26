@@ -1,5 +1,3 @@
-const Carts_has_product = require("./Carts_has_product");
-
 module.exports = (sequelize, DataTypes) => {
 	const alias = "carts";
 	const cols = {

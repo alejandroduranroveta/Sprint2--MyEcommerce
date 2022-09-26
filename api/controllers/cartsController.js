@@ -1,10 +1,8 @@
 const { sequelize } = require('../../database/models');
-const db = require('../../database/models')
-
-let responseSent = false;
-
+const db = require('../../database/models');
 
 const createCart = userId => {
+
     db.carts.create({
         userId
     }).then(r => {
@@ -55,4 +53,4 @@ const editCart = async (req, res) => {
     
 }
 
-module.exports = { cartById, editCart };
+module.exports = { cartById, editCart, createCart};
