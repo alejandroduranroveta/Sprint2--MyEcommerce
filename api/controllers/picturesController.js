@@ -116,6 +116,29 @@ const picturesController = {
     }
   },
 
+  deletedByProduct: async (req, res, id) => {
+    //eliminar imagenes desde products antes de eliminar un producto
+  
+    try {
+      const picDel = await db.pictures.destroy({
+        where: {
+          id
+        },
+      });
+
+      return (picDel != 0) ? res.status(200).json({
+        msg: "Images has been deleted",
+        picDel
+      }) : res.status(400).json({ msg: "Images could not be deleted."});
+
+    } catch (error) {
+      return res.status(500).json({
+        msg: "Internal error when trying to delete images.",
+        error,
+      });
+    }
+  },
+
   picturesProduct: async (req, res) => {
     // listar imagenes asociadas a un id de producto por ruta '/products/:id/pictures'
     const id = req.params.id;

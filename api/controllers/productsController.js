@@ -1,5 +1,6 @@
 const cartsController = require("./cartsController");
 const Sequelize = require('sequelize');
+const pictures = require('./picturesController.js')
 const Op = Sequelize.Op;
 
 const db = require('../../database/models');
@@ -139,18 +140,17 @@ const productsController = {
   },
   deleted:async (req, res) => {
     const { id } = req.params;
-
     try {
       const element = await db.products.findByPk(id);
       if(element){
-        await element.destroy()
+        pictures.deletedByProduct(req,res,id);
+        await element.destroy();
         return res.status(200).json(element);
       }else{
         res.status(401).json({
           msg: "Not found products",
         });
       }
-      
     } catch (error) {
       console.log(error);
       res.status(500).json({

@@ -6,7 +6,9 @@ const userController = {
 	login: async (req, res) => {
 		try {
 			const { username, password } = req.body;
-			const user = await db.users.findOne(
+			const user = await db.users.findOne({
+				attributes: {exclude: ['password']}
+			},
 				{
 					where:{
 						username,
@@ -14,17 +16,8 @@ const userController = {
 					}
 				}
 			);
-			let {id,first_name,last_name,username:usuario,email,role} = user;
-			let 
-			userToPass = {
-				id,
-                first_name,
-                last_name,
-				username: usuario,
-                email,
-                role
-			}
-			const token = await generateJWT(userToPass);
+			
+			const token = await generateJWT(user);
 			return res.status(200).json({
 				success: true,
 				message: "Authorized",
@@ -44,7 +37,10 @@ const userController = {
 	},
 	list: async (req, res) => {
 		try {
-			const list = await db.users.findAll();
+			const list = await db.users.findAll({
+				attributes: {exclude: ['password']}
+			});
+
 			if (list.length > 0) {
 				res.status(200).json(list);
 			}else{
@@ -59,17 +55,11 @@ const userController = {
 	},
 	searchById: async (req, res) => {
 		try {
-			const searchById = await db.users.findByPk(req.params.id);
+			const searchById = await db.users.findByPk(req.params.id,{
+				attributes: {exclude: ['password']}
+			});
 			if (searchById != null) {
-				let { id, email, name, profile_pic, role } = searchById;
-				const user = {
-					id,
-					name,
-					email,
-					profile_pic,
-					role,
-				};
-				res.status(200).json(user);
+				res.status(200).json(searchById);
 			} else if (!isNaN(req.params.id)) {
 				res.status(404).json({ msg: "Not fund user" });
 			} else {
