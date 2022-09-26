@@ -33,15 +33,6 @@ const userController = {
 				},
 				token,
 			});
-			// if (user) {
-			// 	delete user.password;
-			// 	
-			
-			// } else {
-			// 	return res.status(401).json({
-			// 		msg: "Error en credenciales",
-			// 	});
-			// }
 		} catch (error) {
 			console.log(error);
 			return res.status(500).json({
@@ -115,7 +106,6 @@ const userController = {
 				role,
 				username
 			};
-			console.table(newUser);
 			await db.users.create(newUser);
 			req.method === "POST"
 				? res.status(201).json(newUser)
