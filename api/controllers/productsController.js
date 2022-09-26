@@ -1,9 +1,6 @@
 const cartsController = require("./cartsController");
-
-
-//sacar estas dos de json
-const fs = require("fs");
-const path = require("path");
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const db = require('../../database/models');
 const { NUMBER } = require("sequelize");
@@ -17,41 +14,49 @@ const productsController = {
           const { category } = req.query;
           const search = category.toLowerCase();
           const searchCategory = await db.products.findAll({where:{category_id:category}}); 
-
-      if (!searchCategory) {
-          return res.status(200).json({
-          msg: "No hay productos para su búsqueda",
-          });
-      }
+          
+          if (searchCategory.length == 0) {
+              return res.status(200).json({
+              msg: "Not found products",
+              });
+          }else{
+            return res.status(200).json(searchCategory)
+          }
+        }
       //busqueda product
       if (req.query.q) {
-        let { q } = req.query;
-        let search = q.toLowerCase();
-        let product = db.filter((p) => {
-        return (
-            p.title.toLowerCase().includes(search) ||
-            p.description.toLowerCase().includes(search) ||
-            p.category.toLowerCase().includes(search));
-          });
-        if (product.length == 0) {
-            return res.status(200).json({
-              msg: "No hay productos para su búsqueda",
-            });
-          }else{
-          return res.status(200).json(product);
-        }
-      //listado de Productos 
-          let list = await db.products.findAll()
-          res.status(200).json(list)
-        }
-      }
-    
+          console.log('busqueda product');
+            let { q } = req.query;
+            let search = q.toLowerCase();
+            var product = await db.products.findAll(
+              {
+                where:
+                  {
+                    [Op.or]: [
+                              {title:       { [Op.like]: `%${search}%`}},
+                              {description: { [Op.like]: `%${search}%`}}
+                            ]
+                  }
+              }
+            );
+      
+             if (product.length == 0) {
+                return res.status(402).json({
+                        msg: "Not found products ",
+                        });
+              }else{
+                  return res.status(200).json(product);
+                }  
+      } 
+        //listado de Productos 
+        let list = await db.products.findAll()
+            return res.status(200).json(list)
+      
     }catch (error){
-          console.log(error)
-          res.status(500).json({
+          return res.status(500).json({
             msg:"Error Database"
           })
-        }
+    }
   },
   detail:async (req, res) => {
     try {
@@ -87,29 +92,36 @@ const productsController = {
   },
   modify:async(req, res) => {
     try {
-      const searchById = await db.products.findByPk(req.params.id); 
-      let {id,title,price,description,category_id,most_wanted,stock} = searchById
-      let newProduct = {
-        id,
-        title:req.body.title,
-        price:req.body.price,
-        description:req.body.description,
-        category_id:req.body.category_id,
-        most_wanted:req.body.most_wanted,
-        stock:req.body.stock
-      }
-      let idProducto= req.params.id
-      await db.products.update(newProduct,{where:{id:idProducto}})
+          const searchById = await db.products.findByPk(req.params.id); 
+          if(searchById !=null){
+            let {id} = searchById
+            let {title,price,description,category_id,most_wanted,stock} = req.body
+            let newProduct = {
+              id,
+              title,
+              price,
+              description,
+              category_id,
+              most_wanted,
+              stock
+            }
+            let idProducto= req.params.id
+            await db.products.update(newProduct,{where:{id:idProducto}})
 
-      res.json(newProduct)
+            res.json(newProduct)
+          }else{
+              res.status(500).json({
+                msg: "Not found id",
+              });
+          }
+          
     } catch (error) {
-      res.status(500).json({
-        msg: "Error",
-      });
+            res.status(500).json({
+              msg: "Error",
+            });
     }
   },
   mostwanted:async (req, res) => {
-    console.log("entro por mostwanted");
     try {
       const searchMostWanted = await db.products.findAll({where:{most_wanted:true}}); 
       console.log(searchMostWanted);
