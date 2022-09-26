@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true,
         },
-        name:{
+        first_name:{
             type: DataTypes.STRING(255),
             allowNull: false,
         },
@@ -27,26 +27,26 @@ module.exports = (sequelize, DataTypes) => {
         role:{
             type: DataTypes.STRING(255),
             allowNull: false,
+        },
+		last_name:{
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },username:{
+            type: DataTypes.STRING(255),
+            allowNull: false,
         }
-
-
 	};
+	const config = {
+		timestamps: false
+	}
 
 
-	const User = sequelize.define(alias, cols);
+	const User = sequelize.define(alias, cols,config);
     
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
-    
+	User.associate = (models) => {
+		User.hasOne(models.carts, {
+			foreignKey: "user_id",
+		});
+	};
 	return User;
 };
