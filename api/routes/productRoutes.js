@@ -17,5 +17,4 @@ router.get('/:id',verifyJWT,isAdmin,detail);
 router.delete('/:id',verifyJWT,isGod,deleted);
 router.get('/:id/pictures',verifyJWT,isAdmin,picturesProduct);//muestra la lista de pictures de un id
 
-
 module.exports = router;

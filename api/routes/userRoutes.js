@@ -5,8 +5,6 @@ const isGod = require("../middlewares/isGod");
 const isAdmin = require("../middlewares/isAdmin");
 const verifyJWT = require('../middlewares/verifyJWT');
 
-
-
 router.post("/login",userController.login);
 router.get("/",verifyJWT,isAdmin,userController.list);
 router.get("/:id",verifyJWT,isAdmin,userController.searchById);
