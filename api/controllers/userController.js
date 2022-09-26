@@ -1,42 +1,51 @@
-const fs = require("fs");
-const path = require("path");
-
 const db = require("../../database/models");
+const generateJWT = require("../../api/helpers/generateJWT");
 
 const userController = {
 	login: async (req, res) => {
 		try {
-			const emptyCart = require("../helpers/emptyCart_Login");
 			const { username, password } = req.body;
-			const bdUser = fs.readFileSync(
-				path.join(__dirname, "/../data/users.json"),
-				"utf-8"
+			const user = await db.users.findOne(
+				{
+					where:{
+						username,
+						password,
+					}
+				}
 			);
-			const users = JSON.parse(bdUser);
-			let user = users.find(
-				(user) => user.username == username && user.password == password
-			);
-			if (user) {
-				delete user.password;
-				const token = await generateJWT(user);
-				emptyCart(user.id);
-				return res.status(200).json({
-					success: true,
-					message: "Authorized",
-					user: {
-						iduser: user.id,
-						username: user.username,
-					},
-					token,
-				});
-			} else {
-				return res.status(401).json({
-					msg: "Error en credenciales",
-				});
+			let {id,first_name,last_name,username:usuario,email,role} = user;
+			let 
+			userToPass = {
+				id,
+                first_name,
+                last_name,
+				username: usuario,
+                email,
+                role
 			}
+			const token = await generateJWT(userToPass);
+			return res.status(200).json({
+				success: true,
+				message: "Authorized",
+				user: {
+					iduser: user.id,
+					username: user.username,
+				},
+				token,
+			});
+			// if (user) {
+			// 	delete user.password;
+			// 	
+			
+			// } else {
+			// 	return res.status(401).json({
+			// 		msg: "Error en credenciales",
+			// 	});
+			// }
 		} catch (error) {
+			console.log(error);
 			return res.status(500).json({
-				msg: "ok",
+				msg: "error",
 				error,
 			});
 		}
@@ -89,22 +98,25 @@ const userController = {
 				email = "exaple@gmail.com",
 				name = "pepito",
 				password = "1234",
-				firtsname = "Anonymous",
-				lastname = "Anonymous",
+				first_name = "Anonymous",
+				last_name = "Anonymous",
 				profile_pic = "www.img.com",
 				role = "Guest",
+				username
 			} = req.body;
 
 			let newUser = {
 				email,
 				name,
 				password,
-				firtsname,
-				lastname,
+				first_name,
+				last_name,
 				profile_pic,
 				role,
+				username
 			};
-			db.users.create(newUser);
+			console.table(newUser);
+			await db.users.create(newUser);
 			req.method === "POST"
 				? res.status(201).json(newUser)
 				: res
