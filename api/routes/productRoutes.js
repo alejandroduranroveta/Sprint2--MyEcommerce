@@ -20,7 +20,7 @@ router.get('/',list); //aca hace listado y ademas hace la busqueda por categor
 router.post('/',create);
 
 //router.put('/:id',verifyJWT,isAdmin,modify);
-router.put('/:id',modify); //preguntar a ayrton 
+router.put('/:id',modify); 
 
 //router.get('/:id',verifyJWT,isAdmin,detail);
 router.get('/:id',detail);
