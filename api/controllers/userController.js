@@ -157,6 +157,7 @@ const userController = {
 			let idUser = req.params.id;
 			if (idUser !== null && !isNaN(idUser)) {
 				const userDeleted = await db.users.findByPk(idUser);
+				removeCart(idUser);
 				const destroy = await db.users.destroy({
 					where: {
 						id: idUser

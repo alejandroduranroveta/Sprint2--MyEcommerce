@@ -2,57 +2,73 @@ const { sequelize } = require('../../database/models');
 const db = require('../../database/models');
 
 const createCart = async username => {
-    let user = await db.users.findOne({
-        attributes: ["id"],
-        where: {
-            username
-        }
-    })
-    console.log(user.id);
-
+    let user_id = await getCartIdFromUsername(username);
     await db.carts.create({
-        user_id : user.id
+        user_id
     }).then(r => {
         return r;
     }).catch(err => console.log(err))
-    //falta chequear
 }
 
 const removeCart = async userId => {
     await emptyCart(userId);
-
     await db.carts.destroy({
         where: {
-            user_id : userId
+            user_id: userId
         }
     })
 }
-const emptyCart = async userId =>{
-    const cartId = getCartIdByUserId(userId);
+
+const getCartIdFromUsername = async username => {
+    try {
+        let user = await db.users.findOne({
+            attributes: ["id"],
+            where: {
+                username
+            }
+        })
+        return user.id;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+
+}
+
+const emptyCart = async userId => {
+    const cart_id = getCartIdByUserId(userId);
     console.log(cartId);
     await db.carts_has_products.destroy({
         where: {
-            cart_id: cartId
+            cart_id
         }
     })
 }
 
-const getCartIdByUserId = async userId =>{
-    const cartId = await db.carts.findOne({
+const getCartIdByUserId = async userId => {
+    const cart = await db.carts.findOne({
         attributes: ['id'],
         where: {
-            user_id : userId
+            user_id: userId
         }
     })
-    return Number(cartId)
+    return Number(cart.id)
 }
-const cartById = (req, res) => {
+const cartById = async (req, res) => {
     const { id } = req.dataToken;
+    const carts_id = await getCartIdByUserId(id);
 
     try {
-        db.carts.findByPk(id).then(r => {
-            return res.status(200).json(r);
-        }).catch(err => console.log(err))
+        let cart = await db.carts.findByPk(carts_id);
+        console.log(carts_id);
+        let items = db.carts_has_products.findAll({
+            where: {
+                carts_id
+            }
+        });
+        console.table(items);
+        cart.cart = items;
+        res.status(200).json(cart);
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -78,30 +94,32 @@ const editCart = async (req, res) => {
             })
         });
         res.status(200).json({
-            msg: 'Cart updated'});
-    }catch(err) {
+            msg: 'Cart updated'
+        });
+    } catch (err) {
         console.log(err);
         res.status(500).json({
             msg: 'Server error'
         })
-    } 
+    }
 }
 
 const addToCart = (req, res) => {
     const { id } = req.dataToken;
-    const {product, quantity} = req.body;
+    const { product, quantity } = req.body;
     const cartId = getCartIdByUserId(id);
 
-    try{
+    try {
         db.carts_has_products.create({
             product_id: product,
             carts_id: cartId,
             quantity: quantity
-        }).then(r =>{
+        }).then(r => {
             res.status(200).json({
-                msg: 'Item added'});
+                msg: 'Item added'
+            });
         })
-    }catch(error){
+    } catch (error) {
         console.log(error);
         res.status(500).json({
             msg: 'Server error'
@@ -109,4 +127,4 @@ const addToCart = (req, res) => {
     }
 }
 
-module.exports = { cartById, editCart, createCart, removeCart};
+module.exports = { cartById, editCart, createCart, removeCart };
