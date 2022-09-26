@@ -1,3 +1,5 @@
+const express = require('express');
+const path = require('path');
 const router = express.Router();
 const {detail,create,modify,deleted,picturesProduct} = require(path.resolve(__dirname,'../controllers/picturesController'));
 

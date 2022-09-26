@@ -9,7 +9,7 @@ info:
     - [Repositorio de Github](https://github.com/alejandroduranroveta/Proyecto-miEcommerce-3)
   
 servers:
-  - url: http://localhost:3030/api/v1
+  - url: http://localhost:3001/api/v2
     description: Servidor de la api
     
 tags:

@@ -2,10 +2,7 @@ const cartsController = require("./cartsController");
 const Sequelize = require('sequelize');
 const pictures = require('./picturesController.js')
 const Op = Sequelize.Op;
-
 const db = require('../../database/models');
-const { NUMBER } = require("sequelize");
-const e = require("express");
 
 const productsController = {
   list: async (req, res) => {
