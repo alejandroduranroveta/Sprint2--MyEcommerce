@@ -6,19 +6,19 @@ const picturesController = {
     try {
       const id = req.params.id;
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "El id debe ser un número válido." });
+        return res.status(400).json({ msg: "The id must be a valid number." });
       }
 
       const pic = await db.pictures.findByPk(id);
 
       if (!pic) {
-        return res.status(404).json({ msg: "No hay ninguna imágen con esa id." });
+        return res.status(404).json({ msg: "There is no image with this id." });
       } else {
-        return res.status(200).json({ msg: "Imágen encontrada: ", pic });
+        return res.status(200).json({ msg: "This images has been found:", pic });
       }
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ msg: "Error interno al intentar buscar imágen.", error });
+      return res.status(500).json({ msg: "Internal error when trying to find images.", error });
     }
   },
 
@@ -27,10 +27,10 @@ const picturesController = {
     try {
       const { img, description, product_id } = req.body;
       if (!img) {
-        res.status(400).json({ msg: "La url de la imágen es obligatorio." });
+        res.status(400).json({ msg: "The url of the image is required." });
       }
       if (isNaN(product_id) || product_id <= 0) {
-        return res.status(400).json({ msg: "Falta 'product_id' o debe ser un número válido." });
+        return res.status(400).json({ msg: "The 'product_id' is not found or must be a valid number" });
       }
 
       const pic = await db.pictures.create({
@@ -41,12 +41,12 @@ const picturesController = {
 
       return (pic != 0) ? 
       res.status(201).json({
-        msg: "Imagen creada con éxito",pic}) : 
+        msg: "Image has been created",pic}) : 
       res.status(500).json({
-        msg: "Error inesperado al crear imagen"});
+        msg: "Unexpected error when creating image."});
 
     } catch (error) {
-      return res.status(500).json({ msg: "Error interno al intentar crear imagen", error });
+      return res.status(500).json({ msg: "Internal error when trying to create images.", error });
     }
   },
 
@@ -54,17 +54,17 @@ const picturesController = {
     //modificar imagen por ruta '/products/:id'
     try {
       const id = req.params.id;
-      if (isNaN(id)) {
-        return res.status(400).json({ msg: "el id debe ser un número" });
+      if (isNaN(id) || id <= 0) {
+        return res.status(400).json({ msg: "The id must be a valid number." });
       }
 
       const { img, description, product_id } = req.body;
 
       if (!img) {
-        return res.status(400).json({ msg: "Es obligatorio ingresar la url de la imágen" });
+        return res.status(400).json({ msg: "The url of the image is required." });
       }
       if (!product_id) {
-        return res.status(400).json({msg: "Es obligatorio el id de producto asociado a la imágen."});
+        return res.status(400).json({msg: "The product id associated with the image is required."});
       }
 
       const picMod = await db.pictures.update(
@@ -81,15 +81,15 @@ const picturesController = {
       );
 
       return (picMod != 0) ? res.status(200).json({
-        msg: "Imágen modificada correctamente.",
+        msg: "Image has been modified",
         img,
         description,
         product_id,
       }) : res.status(400).json({
-        msg: "Ninguna imágen fue modificada, compruebe que el id sea correcto."});
+        msg: "No image was modified, check that the id is correct."});
 
     } catch (error) {
-      return res.status(500).json({ msg: "Error interno al intentar modificar imágen.", error });
+      return res.status(500).json({ msg: "Internal error when trying to modify images.", error });
     }
   },
 
@@ -104,13 +104,13 @@ const picturesController = {
       });
 
       return (picDel != 0) ? res.status(200).json({
-        msg: "Imágen eliminada correctamente.",
+        msg: "Image has been deleted",
         picDel
-      }) : res.status(400).json({ msg: "No se pudo eliminar la imágen."});
+      }) : res.status(400).json({ msg: "The image could not be deleted."});
 
     } catch (error) {
       return res.status(500).json({
-        msg: "Error interno al intentar eliminar la imágen.",
+        msg: "Internal error when trying to delete images.",
         error,
       });
     }
@@ -121,7 +121,7 @@ const picturesController = {
     const id = req.params.id;
     if (id) {
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "El id debe ser un número válido." });
+        return res.status(400).json({ msg: "The id must be a valid number." });
       }
 
       try {
@@ -131,11 +131,10 @@ const picturesController = {
             product_id: id,
           },
         });
-
-        return res.status(200).json({ msg: "Imágenes encontradas:", pics });
+        return res.status(200).json({ msg: "These images has been found", pics });
 
       } catch (error) {
-        return res.status(500).json({ msg: "Error interno al intentar listar imágenes.", error });
+        return res.status(500).json({ msg: "Internal error when trying to list images.", error });
       }
     }
 
@@ -144,7 +143,7 @@ const picturesController = {
     const product_id = req.query.product;
     if (product_id) {
       if (isNaN(product_id) || id <= 0) {
-        return res.status(400).json({ msg: "El id debe ser un número válido." });
+        return res.status(400).json({ msg: "The id must be a valid number." });
       }
 
       try {
@@ -154,10 +153,10 @@ const picturesController = {
             product_id
           },
         });
-        return res.status(200).json({ msg: "Imágenes encontradas:", pics });
+        return res.status(200).json({ msg: "These images has been found", pics });
 
       } catch (error) {
-        return res.status(500).json({ msg: "Error interno al listar imágenes.", error });
+        return res.status(500).json({ msg: "Internal error when trying to list images.", error });
       }
     }
   }
