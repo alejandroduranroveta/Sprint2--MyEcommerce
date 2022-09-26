@@ -15,11 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
             allowNull: false,
 		},
-        img: {
-            type: DataTypes.STRING(255),
-            allowNull: false,
-            unique: true,
-        },
         price: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -37,22 +32,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
 	};
-
-
 	const Product = sequelize.define(alias, cols);
-    
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
-
+	Product.associate = (models)=>{
+	Product.hasMany(models.pictures,{foreignKey:'id_product'})
+	Product.belongsToMany(models.carts,{foreignKey:'id',through:'carts_has_products'})
+	 }
 	return Product;
 };
