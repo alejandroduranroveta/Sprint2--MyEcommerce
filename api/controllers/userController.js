@@ -1,5 +1,6 @@
 const db = require("../../database/models");
 const generateJWT = require("../../api/helpers/generateJWT");
+const {createCart, removeCart} = require("./cartsController");
 
 const userController = {
 	login: async (req, res) => {
@@ -107,6 +108,7 @@ const userController = {
 				username
 			};
 			await db.users.create(newUser);
+			await createCart(username);
 			req.method === "POST"
 				? res.status(201).json(newUser)
 				: res

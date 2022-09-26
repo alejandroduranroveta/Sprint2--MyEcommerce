@@ -1,15 +1,23 @@
 const { sequelize } = require('../../database/models');
 const db = require('../../database/models');
 
-const createCart = userId => {
+const createCart = async username => {
+    let user = await db.users.findOne({
+        attributes: ["id"],
+        where: {
+            username
+        }
+    })
+    console.log(user.id);
 
-    db.carts.create({
-        userId
+    await db.carts.create({
+        user_id : user.id
     }).then(r => {
         return r;
     }).catch(err => console.log(err))
     //falta chequear
 }
+
 const removeCart = async userId => {
     await emptyCart(userId);
 
