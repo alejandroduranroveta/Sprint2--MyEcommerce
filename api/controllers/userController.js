@@ -44,7 +44,11 @@ const userController = {
 	list: async (req, res) => {
 		try {
 			const list = await db.users.findAll();
-			res.status(200).json(list);
+			if (list.length > 0) {
+				res.status(200).json(list);
+			}else{
+				res.status(200).json({msg: "Empy list"});
+			}
 		} catch (error) {
 			console.log(error);
 			res.status(500).json({
@@ -71,7 +75,7 @@ const userController = {
 				res
 					.status(400)
 					.json({
-						msg: `${req.params.id} that is not a valid id, try with something else numerical`,
+						msg: `'${req.params.id}' that is not a valid id, try with something else numerical`,
 					});
 			}
 		} catch (error) {
@@ -114,35 +118,29 @@ const userController = {
 	modifyUser: async (req, res) => {
 		try {
 			let idUser = req.params.id;
-			if (idUser !== null) {
+			if (idUser !== null && !isNaN(idUser)) {
 				const searchById = await db.users.findByPk(idUser);
-				let {id,
-					email,
-					username,
-					firts_name,
-					last_name,
-					profile_pic,
-					role,
-					password} = searchById;
+				console.log(searchById);		
+				let {id} = searchById;
 				let newUser = {
 					id,
-					email,
-					username,
-					firts_name,
-					last_name,
-					profile_pic,
-					role,
-					password
+					email: req.body.email,
+					username: req.body.username,
+					firts_name: req.body.firts_name,
+					last_name: req.body.last_name,
+					profile_pic: req.body.profile_pic,
+					role: req.body.role,
+					password: req.body.password
 				};
 				await db.users.update(newUser, { where: { id: idUser } });
 				res.json(newUser);
-			} else if (!isNaN(req.params.id)) {
-				res.status(404).json({ msg: "Not fund user" });
-			} else {
+			} else if(!isNaN(idUser)){
+				return res.status(404).json({ msg: "Not fund user" });
+			}else{
 				res
 					.status(400)
 					.json({
-						msg: `${req.params.id} that is not a valid id, try with something else numerical`,
+						msg: `'${idUser}' that is not a valid id, try with something else numerical`,
 					});
 			}
 		} catch (error) {
@@ -150,32 +148,32 @@ const userController = {
 			res.status(500);
 		}
 	},
-	delete: (req, res) => {
+	delete: async(req, res) => {
 		try {
-			let id = req.body.id;
-			if (id) {
-				let bdUser = fs.readFileSync(
-					path.join(__dirname, "/../data/users.json"),
-					"utf-8"
-				);
-				let users = JSON.parse(bdUser);
-				let userDelete = users.find((e) => e.id === Number(id));
-				if (userDelete) {
-					let usersAux = users.filter((e) => e.id !== Number(id));
-					bdUser = fs.writeFileSync(
-						path.join(__dirname, "/../data/users.json"),
-						JSON.stringify(usersAux)
-					);
-					res.status(200).json(userDelete);
-				} else {
-					return res.status(404);
-				}
+			let idUser = req.params.id;
+			if (idUser !== null && !isNaN(idUser)) {
+				const userDeleted = await db.users.findByPk(idUser);
+				const destroy = await db.users.destroy({
+					where: {
+						id: idUser
+					}
+				});
+				console.log(destroy);
+				res.status(200).json(userDeleted);
+			}else if(!isNaN(idUser)){
+				return res.status(404).json({ msg: "Not fund user" });
+			}else{
+				res
+				.status(400)
+				.json({
+					msg: `'${req.params.id}' that is not a valid id, try with something else numerical`,
+				});
 			}
 		} catch (error) {
-			console.log(error);
 			res.status(500);
+			console.log(error);
 		}
-	},
+	}
 };
 
 module.exports = userController;
