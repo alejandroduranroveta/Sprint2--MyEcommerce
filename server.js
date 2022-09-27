@@ -5,6 +5,7 @@ const productRoutes = require("./api/routes/productRoutes.js");
 const userRoutes = require("./api/routes/userRoutes");
 const cartsRoutes = require("./api/routes/cartRoutes");
 const picturesRoutes = require("./api/routes/picturesRoutes");
+const categoryRouter = require("./api/routes/categoryRoutes");
 
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -17,6 +18,7 @@ app.use("/api/v2/products", productRoutes);
 app.use("/api/v2/users", userRoutes);
 app.use("/api/v2/carts", cartsRoutes);
 app.use("/api/v2/pictures", picturesRoutes);
+app.use("/api/v2/category", categoryRouter);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const PORT = process.env.PORT;
