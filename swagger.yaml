@@ -6,7 +6,7 @@ info:
     Esta es la API de Mi ecommerce.
     
     Links:
-    - [Repositorio de Github](https://github.com/alejandroduranroveta/Proyecto-miEcommerce-3)
+    - [Repositorio de Github](https://github.com/alejandroduranroveta/Sprint2--MyEcommerce)
   
 servers:
   - url: http://localhost:3001/api/v2
