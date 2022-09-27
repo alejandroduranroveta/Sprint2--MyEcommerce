@@ -15,22 +15,22 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
             allowNull: false,
 		},
+		category_id: { 
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
         price: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        category_id: { 
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        most_wanted: {
-            type: DataTypes.INTEGER(1),
-            allowNull: false,
-        },
         stock: {
-            type: DataTypes.INTEGER,
+			type: DataTypes.INTEGER,
             allowNull: false,
-        }
+        },
+		most_wanted: {
+			type: DataTypes.INTEGER(1),
+			allowNull: false,
+		}
 	};
 	const Product = sequelize.define(alias, cols);
 	Product.associate = (models)=>{
