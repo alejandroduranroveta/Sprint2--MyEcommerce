@@ -7,17 +7,17 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			autoIncrement: true,
 		},
+		product_id:{
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
         img:{
             type: DataTypes.STRING(255),
             allowNull: false,
         },
         description: {
             type: DataTypes.STRING,
-        },
-		product_id:{
-			type: DataTypes.INTEGER,
-            allowNull: false,
-		}
+        }
 	};
 
 	const config = {
