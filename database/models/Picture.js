@@ -23,8 +23,7 @@ module.exports = (sequelize, DataTypes) => {
 	const config = {
 		timestamps: false
 	}
-
-
+	
 	const Picture = sequelize.define(alias, cols, config);
 
 	Picture.associate = (models) => {
