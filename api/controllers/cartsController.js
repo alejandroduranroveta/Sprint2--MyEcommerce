@@ -36,11 +36,10 @@ const getCartIdFromUsername = async username => {
 }
 
 const emptyCart = async userId => {
-    const cart_id = getCartIdByUserId(userId);
-    console.log(cartId);
+    const carts_id = await getCartIdByUserId(userId);
     await db.carts_has_products.destroy({
         where: {
-            cart_id
+            carts_id
         }
     })
 }
@@ -52,7 +51,7 @@ const getCartIdByUserId = async userId => {
             user_id: userId
         }
     })
-    return Number(cart.id)
+    return cart.dataValues.id
 }
 const cartById = async (req, res) => {
     const { id } = req.dataToken;
@@ -60,14 +59,20 @@ const cartById = async (req, res) => {
 
     try {
         let cart = await db.carts.findByPk(carts_id);
-        console.log(carts_id);
-        let items = db.carts_has_products.findAll({
+        let items = await db.carts_has_products.findAll({
             where: {
                 carts_id
             }
         });
-        console.table(items);
-        cart.cart = items;
+        cart = cart.dataValues;
+        cart.cart = [];
+        items.forEach(i => {
+            let obj = i.dataValues;
+            cart.cart.push({
+                product : obj.products_id,
+                quantity : obj.quantity
+            })
+        })
         res.status(200).json(cart);
     } catch (error) {
         console.log(error);
@@ -86,11 +91,13 @@ const editCart = async (req, res) => {
         }
     });
     try {
+        let currentTime = new Date();
         cart.forEach(c => {
             db.carts_has_products.create({
-                product_id: c.product,
+                products_id: c.product,
                 carts_id: id,
-                quantity: c.quantity
+                quantity: c.quantity,
+                add_date: currentTime
             })
         });
         res.status(200).json({
