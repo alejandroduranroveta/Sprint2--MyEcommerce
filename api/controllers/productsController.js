@@ -35,7 +35,7 @@ const productsController = {
           },
         });
         if (product.length == 0) {
-          return res.status(402).json({
+          return res.status(200).json({
             msg: "Products not found",
           });
         } else {
@@ -47,7 +47,7 @@ const productsController = {
       if (list.length != 0) {
         return res.status(200).json(list);
       } else {
-        return res.status(402).json({
+        return res.status(200).json({
           msg: "Not found products ",
         });
       }
