@@ -1,22 +1,22 @@
 const db = require("../../database/models");
 const generateJWT = require("../../api/helpers/generateJWT");
-const {createCart, removeCart} = require("./cartsController");
+const { createCart, removeCart } = require("./cartsController");
 
 const userController = {
 	login: async (req, res) => {
 		try {
 			const { username, password } = req.body;
 			const user = await db.users.findOne({
-				attributes: {exclude: ['password']}
-			},
-				{
-					where:{
-						username,
-						password,
-					}
+				attributes: {
+					exclude: ['password']
+				},
+				where: {
+					username,
+					password,
 				}
+			}
 			);
-
+			console.log(user.dataValues);
 			const token = await generateJWT(user.dataValues);
 			return res.status(200).json({
 				success: true,
@@ -38,13 +38,13 @@ const userController = {
 	list: async (req, res) => {
 		try {
 			const list = await db.users.findAll({
-				attributes: {exclude: ['password']}
+				attributes: { exclude: ['password'] }
 			});
 
 			if (list.length > 0) {
 				res.status(200).json(list);
-			}else{
-				res.status(200).json({msg: "Empy list"});
+			} else {
+				res.status(200).json({ msg: "Empy list" });
 			}
 		} catch (error) {
 			console.log(error);
@@ -55,8 +55,8 @@ const userController = {
 	},
 	searchById: async (req, res) => {
 		try {
-			const searchById = await db.users.findByPk(req.params.id,{
-				attributes: {exclude: ['password']}
+			const searchById = await db.users.findByPk(req.params.id, {
+				attributes: { exclude: ['password'] }
 			});
 			if (searchById != null) {
 				res.status(200).json(searchById);
@@ -102,8 +102,8 @@ const userController = {
 			req.method === "POST"
 				? res.status(201).json(newUser)
 				: res
-						.status(400)
-						.json({ msg: "You need use POST method for create user" });
+					.status(400)
+					.json({ msg: "You need use POST method for create user" });
 		} catch (error) {
 			console.log(error);
 			res.status(500).json({ msg: "Error database" });
@@ -114,7 +114,7 @@ const userController = {
 			let idUser = req.params.id;
 			if (idUser !== null && !isNaN(idUser)) {
 				let newUser = {
-					id:idUser,
+					id: idUser,
 					email: req.body.email,
 					username: req.body.username,
 					first_name: req.body.first_name,
@@ -125,9 +125,9 @@ const userController = {
 				};
 				await db.users.update(newUser, { where: { id: idUser } });
 				res.json(newUser);
-			} else if(!isNaN(idUser)){
+			} else if (!isNaN(idUser)) {
 				return res.status(404).json({ msg: "Not found user" });
-			}else{
+			} else {
 				res
 					.status(400)
 					.json({
@@ -139,7 +139,7 @@ const userController = {
 			res.status(500);
 		}
 	},
-	delete: async(req, res) => {
+	delete: async (req, res) => {
 		try {
 			let idUser = req.params.id;
 			if (idUser !== null && !isNaN(idUser)) {
@@ -151,14 +151,14 @@ const userController = {
 					}
 				});
 				res.status(200).json(userDeleted);
-			}else if(!isNaN(idUser)){
+			} else if (!isNaN(idUser)) {
 				return res.status(404).json({ msg: "Not fund user" });
-			}else{
+			} else {
 				res
-				.status(400)
-				.json({
-					msg: `'${req.params.id}' that is not a valid id, try with something else numerical`,
-				});
+					.status(400)
+					.json({
+						msg: `'${req.params.id}' that is not a valid id, try with something else numerical`,
+					});
 			}
 		} catch (error) {
 			res.status(500);
