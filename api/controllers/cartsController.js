@@ -84,11 +84,13 @@ const editCart = async (req, res) => {
         }
     });
     try {
+        let currentTime = new Date();
         cart.forEach(c => {
             db.carts_has_products.create({
-                product_id: c.product,
+                products_id: c.product,
                 carts_id: id,
-                quantity: c.quantity
+                quantity: c.quantity,
+                add_date: currentTime
             })
         });
         res.status(200).json({
