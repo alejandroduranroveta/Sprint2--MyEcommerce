@@ -19,6 +19,14 @@ const removeCart = async userId => {
     })
 }
 
+const removeProductFromCarts = async products_id =>{
+    await db.carts_has_products.destroy({
+        where: {
+            products_id
+        }
+    })
+}
+
 const getCartIdFromUsername = async username => {
     try {
         let user = await db.users.findOne({
@@ -37,7 +45,6 @@ const getCartIdFromUsername = async username => {
 
 const emptyCart = async userId => {
     const cart_id = getCartIdByUserId(userId);
-    console.log(cartId);
     await db.carts_has_products.destroy({
         where: {
             cart_id
@@ -60,15 +67,24 @@ const cartById = async (req, res) => {
 
     try {
         let cart = await db.carts.findByPk(carts_id);
-        console.log(carts_id);
-        let items = db.carts_has_products.findAll({
+        let items = await db.carts_has_products.findAll({
             where: {
                 carts_id
             }
         });
-        console.table(items);
-        cart.cart = items;
-        res.status(200).json(cart);
+        cart = cart.dataValues;
+        let returnCart = {
+            user : cart.user_id,
+            cart : []
+        }
+        items.forEach(i => {
+            let obj = i.dataValues;
+            returnCart.cart.push({
+                product : i.products_id,
+                quantity : obj.quantity
+            });
+        })
+        res.status(200).json(returnCart);
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -86,11 +102,13 @@ const editCart = async (req, res) => {
         }
     });
     try {
+        let currentTime = new Date();
         cart.forEach(c => {
             db.carts_has_products.create({
-                product_id: c.product,
+                products_id: c.product,
                 carts_id: id,
-                quantity: c.quantity
+                quantity: c.quantity,
+                add_date: currentTime
             })
         });
         res.status(200).json({
@@ -110,10 +128,12 @@ const addToCart = (req, res) => {
     const cartId = getCartIdByUserId(id);
 
     try {
+        let currentTime = new Date();
         db.carts_has_products.create({
             product_id: product,
             carts_id: cartId,
-            quantity: quantity
+            quantity: quantity,
+            add_date: currentTime
         }).then(r => {
             res.status(200).json({
                 msg: 'Item added'
@@ -127,4 +147,4 @@ const addToCart = (req, res) => {
     }
 }
 
-module.exports = { cartById, editCart, createCart, removeCart };
+module.exports = { cartById, editCart, createCart, removeCart, removeProductFromCarts };
