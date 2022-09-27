@@ -40,14 +40,25 @@ const picturesController = {
             msg: "The 'product_id' is not found or must be a valid number",
           });
       }
-
+      
+      const product = await db.products.findByPk(product_id);
       const pic = await db.pictures.create({
         img,
         description,
         product_id,
-      });
+      }).catch(err => {
 
-      return pic != 0
+      if (!product) {
+        return res
+        .status(400).json({
+          msg: "Product not found"
+        });
+      }
+        return res
+        .status(400).json({msg: "Invalid values" });
+      });
+      
+      return (pic != 0)
         ? res.status(201).json({
             msg: "Image has been created",
             pic,
@@ -56,9 +67,10 @@ const picturesController = {
             msg: "Unexpected error when creating image.",
           });
     } catch (error) {
+      console.log(error);
       return res
         .status(500)
-        .json({ msg: "Internal error when trying to create images.", error });
+        .json({ msg: "Internal error when trying to create images." });
     }
   },
 
