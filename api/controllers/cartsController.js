@@ -66,7 +66,6 @@ const cartById = async (req, res) => {
         });
         cart = cart.dataValues;
         cart.cart = [];
-        console.log(items);
         items.forEach(i => {
             let obj = i.dataValues;
             cart.cart.push({

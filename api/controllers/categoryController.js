@@ -20,7 +20,6 @@ const categoryController ={
                 name
             }
             const newCategory = await db.category.create(category);
-            console.log(newCategory);
             res.status(200).json(newCategory);
         } catch (errors) {
             console.log(errors);

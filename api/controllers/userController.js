@@ -16,7 +16,6 @@ const userController = {
 				}
 			}
 			);
-			console.log(user.dataValues);
 			const token = await generateJWT(user.dataValues);
 			return res.status(200).json({
 				success: true,
