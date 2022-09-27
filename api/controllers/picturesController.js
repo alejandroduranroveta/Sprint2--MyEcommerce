@@ -6,17 +6,17 @@ const picturesController = {
     try {
       const id = req.params.id;
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "The id must be a valid number." });
+        return res.status(400).json({ msg: "The ID must be a valid number." });
       }
 
       const pic = await db.pictures.findByPk(id);
 
       if (!pic) {
-        return res.status(404).json({ msg: "There is no image with this id." });
+        return res.status(404).json({ msg: "There is no image with this ID." });
       } else {
         return res
           .status(200)
-          .json({ msg: "This images has been found:", pic });
+          .json({ msg: "These images have been found:", pic });
       }
     } catch (error) {
       console.log(error);
@@ -31,7 +31,7 @@ const picturesController = {
     try {
       const { img, description, product_id } = req.body;
       if (!img) {
-        res.status(400).json({ msg: "The url of the image is required." });
+        res.status(400).json({ msg: "The URL of the image is required." });
       }
       if (isNaN(product_id) || product_id <= 0) {
         return res
@@ -67,7 +67,7 @@ const picturesController = {
     try {
       const id = req.params.id;
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "The id must be a valid number." });
+        return res.status(400).json({ msg: "The ID must be a valid number." });
       }
 
       const { img, description, product_id } = req.body;
@@ -75,13 +75,13 @@ const picturesController = {
       if (!img) {
         return res
           .status(400)
-          .json({ msg: "The url of the image is required." });
+          .json({ msg: "The URL of the image is required." });
       }
       if (!product_id) {
         return res
           .status(400)
           .json({
-            msg: "The product id associated with the image is required.",
+            msg: "The product ID associated with the image is required.",
           });
       }
 
@@ -106,7 +106,7 @@ const picturesController = {
             product_id,
           })
         : res.status(400).json({
-            msg: "No image was modified, check that the id is correct.",
+            msg: "No image was modified, check that the ID is correct.",
           });
     } catch (error) {
       return res
@@ -161,7 +161,7 @@ const picturesController = {
     const id = req.params.id;
     if (id) {
       if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ msg: "The id must be a valid number." });
+        return res.status(400).json({ msg: "The ID must be a valid number." });
       }
 
       try {
@@ -180,11 +180,12 @@ const picturesController = {
           .json({ msg: "Internal error when trying to list images.", error });
       }
     }
+    
     //busqueda por query 'products/?product_id=id'
     const product_id = req.query.product;
     if (product_id) {
       if (isNaN(product_id) || id <= 0) {
-        return res.status(400).json({ msg: "The id must be a valid number." });
+        return res.status(400).json({ msg: "The ID must be a valid number." });
       }
       try {
         const pics = await db.pictures.findAll({
