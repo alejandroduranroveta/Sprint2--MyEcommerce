@@ -19,14 +19,6 @@ const removeCart = async userId => {
     })
 }
 
-const removeProductFromCarts = async products_id =>{
-    await db.carts_has_products.destroy({
-        where: {
-            products_id
-        }
-    })
-}
-
 const getCartIdFromUsername = async username => {
     try {
         let user = await db.users.findOne({
@@ -44,10 +36,11 @@ const getCartIdFromUsername = async username => {
 }
 
 const emptyCart = async userId => {
-    const carts_id = await getCartIdByUserId(userId);
+    const cart_id = getCartIdByUserId(userId);
+    console.log(cartId);
     await db.carts_has_products.destroy({
         where: {
-            carts_id
+            cart_id
         }
     })
 }
@@ -59,7 +52,7 @@ const getCartIdByUserId = async userId => {
             user_id: userId
         }
     })
-    return cart.dataValues.id
+    return Number(cart.id)
 }
 const cartById = async (req, res) => {
     const { id } = req.dataToken;
@@ -67,24 +60,15 @@ const cartById = async (req, res) => {
 
     try {
         let cart = await db.carts.findByPk(carts_id);
-        let items = await db.carts_has_products.findAll({
+        console.log(carts_id);
+        let items = db.carts_has_products.findAll({
             where: {
                 carts_id
             }
         });
-        cart = cart.dataValues;
-        let returnCart = {
-            user : cart.user_id,
-            cart : []
-        }
-        items.forEach(i => {
-            let obj = i.dataValues;
-            returnCart.cart.push({
-                product : i.products_id,
-                quantity : obj.quantity
-            });
-        })
-        res.status(200).json(returnCart);
+        console.table(items);
+        cart.cart = items;
+        res.status(200).json(cart);
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -102,13 +86,11 @@ const editCart = async (req, res) => {
         }
     });
     try {
-        let currentTime = new Date();
         cart.forEach(c => {
             db.carts_has_products.create({
-                products_id: c.product,
+                product_id: c.product,
                 carts_id: id,
-                quantity: c.quantity,
-                add_date: currentTime
+                quantity: c.quantity
             })
         });
         res.status(200).json({
@@ -128,12 +110,10 @@ const addToCart = (req, res) => {
     const cartId = getCartIdByUserId(id);
 
     try {
-        let currentTime = new Date();
         db.carts_has_products.create({
             product_id: product,
             carts_id: cartId,
-            quantity: quantity,
-            add_date: currentTime
+            quantity: quantity
         }).then(r => {
             res.status(200).json({
                 msg: 'Item added'
@@ -147,4 +127,4 @@ const addToCart = (req, res) => {
     }
 }
 
-module.exports = { cartById, editCart, createCart, removeCart, removeProductFromCarts };
+module.exports = { cartById, editCart, createCart, removeCart };
