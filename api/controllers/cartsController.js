@@ -19,6 +19,14 @@ const removeCart = async userId => {
     })
 }
 
+const removeProductFromCarts = async products_id =>{
+    await db.carts_has_products.destroy({
+        where: {
+            products_id
+        }
+    })
+}
+
 const getCartIdFromUsername = async username => {
     try {
         let user = await db.users.findOne({
@@ -37,7 +45,6 @@ const getCartIdFromUsername = async username => {
 
 const emptyCart = async userId => {
     const cart_id = getCartIdByUserId(userId);
-    console.log(cartId);
     await db.carts_has_products.destroy({
         where: {
             cart_id
@@ -140,4 +147,4 @@ const addToCart = (req, res) => {
     }
 }
 
-module.exports = { cartById, editCart, createCart, removeCart };
+module.exports = { cartById, editCart, createCart, removeCart, removeProductFromCarts };
