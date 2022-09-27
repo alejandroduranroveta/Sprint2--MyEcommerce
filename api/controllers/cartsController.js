@@ -44,10 +44,10 @@ const getCartIdFromUsername = async username => {
 }
 
 const emptyCart = async userId => {
-    const cart_id = getCartIdByUserId(userId);
+    const carts_id = await getCartIdByUserId(userId);
     await db.carts_has_products.destroy({
         where: {
-            cart_id
+            carts_id
         }
     })
 }
@@ -59,7 +59,7 @@ const getCartIdByUserId = async userId => {
             user_id: userId
         }
     })
-    return Number(cart.id)
+    return cart.dataValues.id
 }
 const cartById = async (req, res) => {
     const { id } = req.dataToken;

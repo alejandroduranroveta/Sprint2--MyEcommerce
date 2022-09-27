@@ -144,12 +144,13 @@ const userController = {
 			let idUser = req.params.id;
 			if (idUser !== null && !isNaN(idUser)) {
 				const userDeleted = await db.users.findByPk(idUser);
-				removeCart(idUser);
+				await removeCart(idUser);
 				const destroy = await db.users.destroy({
 					where: {
 						id: idUser
 					}
 				});
+				console.log('delete delete delete')
 				console.log(destroy);
 				res.status(200).json(userDeleted);
 			}else if(!isNaN(idUser)){
