@@ -126,11 +126,6 @@ const picturesController = {
         },
       });
 
-      return (picDel != 0) ? res.status(200).json({
-        msg: "Images has been deleted",
-        picDel
-      }) : res.status(400).json({ msg: "Images could not be deleted."});
-
     } catch (error) {
       return res.status(500).json({
         msg: "Internal error when trying to delete images.",
