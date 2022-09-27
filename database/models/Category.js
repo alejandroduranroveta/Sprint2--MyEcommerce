@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         name:{
             type: DataTypes.STRING(255),
             allowNull: false,
-            uniquer: true
+            unique: true
         }
 	};
 	const config = {
@@ -18,19 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false
     }
 	const Category = sequelize.define(alias, cols,config);
-    
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
-    
+	Category.associate = (models)=>{
+	Category.hasMany(models.products,{
+		foreignKey: 'category_id'
+	})
+	}
 	return Category;
 };

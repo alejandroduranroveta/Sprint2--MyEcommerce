@@ -16,7 +16,7 @@ const userController = {
 					}
 				}
 			);
-			console.log(user.dataValues)
+
 			const token = await generateJWT(user.dataValues);
 			return res.status(200).json({
 				success: true,
@@ -117,7 +117,7 @@ const userController = {
 					id:idUser,
 					email: req.body.email,
 					username: req.body.username,
-					firts_name: req.body.firts_name,
+					first_name: req.body.first_name,
 					last_name: req.body.last_name,
 					profile_pic: req.body.profile_pic,
 					role: req.body.role,
@@ -126,7 +126,7 @@ const userController = {
 				await db.users.update(newUser, { where: { id: idUser } });
 				res.json(newUser);
 			} else if(!isNaN(idUser)){
-				return res.status(404).json({ msg: "Not fund user" });
+				return res.status(404).json({ msg: "Not found user" });
 			}else{
 				res
 					.status(400)
@@ -150,8 +150,6 @@ const userController = {
 						id: idUser
 					}
 				});
-				console.log('delete delete delete')
-				console.log(destroy);
 				res.status(200).json(userDeleted);
 			}else if(!isNaN(idUser)){
 				return res.status(404).json({ msg: "Not fund user" });
