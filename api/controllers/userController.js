@@ -106,18 +106,15 @@ const userController = {
 						.json({ msg: "You need use POST method for create user" });
 		} catch (error) {
 			console.log(error);
-			res.status(500).json({ msg: error });
+			res.status(500).json({ msg: "Error database" });
 		}
 	},
 	modifyUser: async (req, res) => {
 		try {
 			let idUser = req.params.id;
 			if (idUser !== null && !isNaN(idUser)) {
-				const searchById = await db.users.findByPk(idUser);
-				console.log(searchById);		
-				let {id} = searchById;
 				let newUser = {
-					id,
+					id:idUser,
 					email: req.body.email,
 					username: req.body.username,
 					firts_name: req.body.firts_name,
