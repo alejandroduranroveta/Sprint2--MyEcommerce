@@ -59,13 +59,21 @@ const cartById = async (req, res) => {
 
     try {
         let cart = await db.carts.findByPk(carts_id);
-        let items = db.carts_has_products.findAll({
+        let items = await db.carts_has_products.findAll({
             where: {
                 carts_id
             }
         });
-        console.table(items);
-        cart.cart = items;
+        cart = cart.dataValues;
+        cart.cart = [];
+        console.log(items);
+        items.forEach(i => {
+            let obj = i.dataValues;
+            cart.cart.push({
+                product : obj.products_id,
+                quantity : obj.quantity
+            })
+        })
         res.status(200).json(cart);
     } catch (error) {
         console.log(error);
