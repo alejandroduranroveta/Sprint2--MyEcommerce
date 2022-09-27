@@ -95,11 +95,13 @@ const editCart = async (req, res) => {
         }
     });
     try {
+        let currentTime = new Date();
         cart.forEach(c => {
             db.carts_has_products.create({
-                product_id: c.product,
+                products_id: c.product,
                 carts_id: id,
-                quantity: c.quantity
+                quantity: c.quantity,
+                add_date: currentTime
             })
         });
         res.status(200).json({
@@ -119,10 +121,12 @@ const addToCart = (req, res) => {
     const cartId = getCartIdByUserId(id);
 
     try {
+        let currentTime = new Date();
         db.carts_has_products.create({
             product_id: product,
             carts_id: cartId,
-            quantity: quantity
+            quantity: quantity,
+            add_date: currentTime
         }).then(r => {
             res.status(200).json({
                 msg: 'Item added'
