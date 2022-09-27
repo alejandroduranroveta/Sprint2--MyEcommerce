@@ -7,21 +7,21 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			autoIncrement: true,
 		},
-        name:{
-            type: DataTypes.STRING(255),
-            allowNull: false,
-            unique: true
-        }
+		name: {
+			type: DataTypes.STRING(255),
+			allowNull: false,
+			unique: true
+		}
 	};
 	const config = {
-        tableName: alias,
-        timestamps: false
-    }
-	const Category = sequelize.define(alias, cols,config);
-	Category.associate = (models)=>{
-	Category.hasMany(models.products,{
-		foreignKey: 'category_id'
-	})
+		tableName: alias,
+		timestamps: false
+	}
+	const Category = sequelize.define(alias, cols, config);
+	Category.associate = (models) => {
+		Category.hasMany(models.products, {
+			foreignKey: 'category_id'
+		})
 	}
 	return Category;
 };
