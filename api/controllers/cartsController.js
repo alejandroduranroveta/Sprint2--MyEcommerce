@@ -85,6 +85,7 @@ const cartById = async (req, res) => {
 const editCart = async (req, res) => {
     const { id } = req.dataToken;
     const cart = req.body.cart;
+    let error = false;
     await db.carts_has_products.destroy({
         where: {
             carts_id: id
@@ -92,17 +93,32 @@ const editCart = async (req, res) => {
     });
     try {
         let currentTime = new Date();
+        const products = await db.products.findAll();
+        const productList = [];
+        products.forEach(p => {
+            productList.push(p.dataValues)
+        });
         cart.forEach(c => {
-            db.carts_has_products.create({
-                products_id: c.product,
-                carts_id: id,
-                quantity: c.quantity,
-                add_date: currentTime
-            })
+            let product = productList.find(p => p.id == c.product);
+            if(product.stock >= c.quantity){
+                db.carts_has_products.create({
+                    products_id: c.product,
+                    carts_id: id,
+                    quantity: c.quantity,
+                    add_date: currentTime
+                })
+            }else{
+                error = true;
+                return res.status(400).json({
+                    msg: `No hay suficiente del producto ${product.title}, hay stock de: ${product.stock}`
+                })
+            }
         });
-        res.status(200).json({
-            msg: 'Cart updated'
-        });
+        if(!error){
+            res.status(200).json({
+                msg: 'Cart updated'
+            });
+        }
     } catch (err) {
         console.log(err);
         res.status(500).json({
