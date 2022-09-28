@@ -3,7 +3,8 @@ USE sprint2;
 INSERT INTO users(first_name, last_name, email,username,password,profile_pic,role)
 VALUES ('Bruno', 'Fulco', 'bruno.fulco@outlook.com', 'brunof', '123456', 'https://ibb.co/zF5mrtX','God'), 
     ('Jefferson', 'Guttieritos', 'jguttierritos@email.com', 'jeffg', '123456', 'https://ibb.co/BVmwZdz','Admin'), 
-    ('Alvin', 'Yakitori', 'ayakitori@email.com', 'alvin420', '123456', 'https://ibb.co/vD9Xxn5','Guest');
+    ('Alvin', 'Yakitori', 'ayakitori@email.com', 'alvin420', '123456', 'https://ibb.co/vD9Xxn5','Guest'),
+    ('Federico', 'de Fortuny', 'fdefortuny@gmail.com', 'fdefortuny', '123456', 'https://ibb.co/zF5mrtX','God');
 
 
 INSERT INTO category(name) 

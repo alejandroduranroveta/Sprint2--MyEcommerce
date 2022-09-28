@@ -42,12 +42,13 @@ const picturesController = {
       }
       
       const product = await db.products.findByPk(product_id);
+      
       const pic = await db.pictures.create({
         img,
         description,
         product_id,
       }).catch(err => {
-
+      console.log(err);
       if (!product) {
         return res
         .status(400).json({
