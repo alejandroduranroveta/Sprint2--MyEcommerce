@@ -194,8 +194,8 @@ const picturesController = {
       }
     }
     
-    //busqueda por query 'products/?product_id=id'
-    const product_id = req.query.product;
+    //busqueda por query 'pictures/?product_id=id'
+    const product_id = req.query.product_id;
     if (product_id) {
       if (isNaN(product_id) || id <= 0) {
         return res.status(400).json({ msg: "The ID must be a valid number." });
