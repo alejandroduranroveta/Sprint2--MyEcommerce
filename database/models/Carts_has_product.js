@@ -18,25 +18,28 @@ module.exports = (sequelize, DataTypes) => {
         add_date:{
             type: DataTypes.DATE,
             allowNull: false,
+            defaultValue: sequelize.NOW
         }
 
 	};
 
+    const config = {
+        timestamps : false,
+        createdAt: "add_date"
+    }
 
-	const Carts_has_product = sequelize.define(alias, cols);
+	const Carts_has_product = sequelize.define(alias, cols, config);
     
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
+	Carts_has_product.associate = (models) => {
+		Carts_has_product.belongsTo(models.carts, {
+			as: "Carts_has_product",
+			foreignKey: "carts_id",
+		});
+        Carts_has_product.belongsTo(models.products, {
+            foreignKey: "products_id",
+            as: "productos",
+        })
+	};
     
 	return Carts_has_product;
 };

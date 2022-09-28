@@ -1,110 +1,137 @@
-const fs = require('fs');
-const path = require('path');
+const { sequelize } = require('../../database/models');
+const db = require('../../database/models');
 
-let responseSent = false;
-
-const cartById = (req, res) => {
-    const { id } = req.dataToken;
-
-    try {
-        const dataToParse = fs.readFileSync(path.resolve(__dirname, '../data/carts.json'), 'utf-8');
-        const cart = JSON.parse(dataToParse);
-
-        if (!cart || id == 0) {
-            return res.status(404).json({
-                msg: "El carrito no existe"
-            })
-        }
-
-        if (id != cart.user) {
-            return res.status(403).json({
-                msg: 'Solo puede acceder a su propio carrito'
-            })
-        }
-
-        res.status(200).json(cart)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: 'Server error'
-        })
-    }
+const createCart = async username => {
+    let user_id = await getCartIdFromUsername(username);
+    await db.carts.create({
+        user_id
+    }).then(r => {
+        return r;
+    }).catch(err => console.log(err))
 }
 
-const editCart = (req, res) => {
-    const { id } = req.dataToken;
-
-    try {
-        const dataToParse = fs.readFileSync(path.resolve(__dirname, '../data/carts.json'), 'utf-8');
-        const data = JSON.parse(dataToParse);
-
-        let cart = data;
-
-        if (!cart || id == 0) {
-            return res.status(404).json({
-                msg: "El carrito no existe"
-            })
-        }
-
-        cart = {
-            user: id,
-            cart: req.body.cart
-        };
-
-        if (validCart(cart, res)) {
-            fs.writeFileSync(path.resolve(__dirname, '../data/carts.json'), JSON.stringify(cart))
-            return res.status(200).json(cart)
-        }
-
-        if (!responseSent)
-            res.status(400).json({
-                msg: 'Formato de carts incorrecto'
-            })
-
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: 'Server error'
-        })
-    }
-}
-
-const validCart = (cart, res) => {
-    cartArray = cart.cart;
-    let products = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/products.json'), 'utf-8'));
-    if (!cartArray || cartArray.length < 1) return false;
-
-    let existe = true;
-    cartArray.forEach(e => {
-        if (!e.product || !productExists(e.product, products, res) || !e.quantity || e.quantity < 1) {
-            existe = false;
-            return;
+const removeCart = async userId => {
+    await emptyCart(userId);
+    await db.carts.destroy({
+        where: {
+            user_id: userId
         }
     })
-    return existe;
 }
 
-const productExists = (p, products, res) => {
-    let _prod = products.find(pr => pr.id == p);
-    if (!_prod) {
-        responseSent = true;
-        console.log('Producto ' + p + ' no existe.');
-        res.status(400).json({
-            msg: `El producto ${p} no existe.`
+const getCartIdFromUsername = async username => {
+    try {
+        let user = await db.users.findOne({
+            attributes: ["id"],
+            where: {
+                username
+            }
         })
-        return false;
+        return user.id;
+    } catch (err) {
+        console.log(err);
+        return null;
     }
-    return true;
-}
-
-const removeProductFromCart = productId => {
-    const dataToParse = fs.readFileSync(path.resolve(__dirname, '../data/carts.json'), 'utf-8');
-    const data = JSON.parse(dataToParse);
-
-    let cart = data.cart.filter(item => item.product != productId);
-
-    fs.writeFileSync(path.resolve(__dirname, '../data/carts.json'), JSON.stringify(cart))
 
 }
-module.exports = { cartById, editCart, removeProductFromCart };
+
+const emptyCart = async userId => {
+    const carts_id = await getCartIdByUserId(userId);
+    await db.carts_has_products.destroy({
+        where: {
+            carts_id
+        }
+    })
+}
+
+const getCartIdByUserId = async userId => {
+    const cart = await db.carts.findOne({
+        attributes: ['id'],
+        where: {
+            user_id: userId
+        }
+    })
+    return cart.dataValues.id
+}
+const cartById = async (req, res) => {
+    const { id } = req.dataToken;
+    const carts_id = await getCartIdByUserId(id);
+
+    try {
+        let cart = await db.carts.findByPk(carts_id);
+        let items = await db.carts_has_products.findAll({
+            where: {
+                carts_id
+            }
+        });
+        cart = cart.dataValues;
+        cart.cart = [];
+        items.forEach(i => {
+            let obj = i.dataValues;
+            cart.cart.push({
+                product : obj.products_id,
+                quantity : obj.quantity
+            })
+        })
+        res.status(200).json(cart);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: 'Server error'
+        })
+    }
+}
+
+const editCart = async (req, res) => {
+    const { id } = req.dataToken;
+    const cart = req.body.cart;
+    await db.carts_has_products.destroy({
+        where: {
+            carts_id: id
+        }
+    });
+    try {
+        let currentTime = new Date();
+        cart.forEach(c => {
+            db.carts_has_products.create({
+                products_id: c.product,
+                carts_id: id,
+                quantity: c.quantity,
+                add_date: currentTime
+            })
+        });
+        res.status(200).json({
+            msg: 'Cart updated'
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            msg: 'Server error'
+        })
+    }
+}
+
+const addToCart = (req, res) => {
+    const { id } = req.dataToken;
+    const { product, quantity } = req.body;
+    const cartId = getCartIdByUserId(id);
+
+    try {
+        db.carts_has_products.create({
+            product_id: product,
+            carts_id: cartId,
+            quantity: quantity
+        }).then(r => {
+            res.status(200).json({
+                msg: 'Item added'
+            });
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: 'Server error'
+        })
+    }
+}
+
+module.exports = { cartById, editCart, createCart, removeCart };

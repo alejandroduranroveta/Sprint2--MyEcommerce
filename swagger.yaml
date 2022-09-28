@@ -6,10 +6,10 @@ info:
     Esta es la API de Mi ecommerce.
     
     Links:
-    - [Repositorio de Github](https://github.com/alejandroduranroveta/Proyecto-miEcommerce-3)
+    - [Repositorio de Github](https://github.com/alejandroduranroveta/Sprint2--MyEcommerce)
   
 servers:
-  - url: http://localhost:3030/api/v1
+  - url: http://localhost:3001/api/v2
     description: Servidor de la api
     
 tags:
@@ -181,17 +181,13 @@ paths:
       summary: Eliminar el user identificado con id. Cuando se elimina un user, primero debe vaciarse su carrito (cart). 
       security:
         - bearerAuth: []         
-      requestBody:
-        description: Id del usuario a eliminar
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: number
-                  example: 2
-        required: true
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: Id del usuario a eliminar
       responses: 
         '200':
           description: El usuario fue eliminado

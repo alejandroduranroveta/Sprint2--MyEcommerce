@@ -10,12 +10,11 @@ const verifyJWT = require("../middlewares/verifyJWT");
 
 router.get('/search',verifyJWT,isGuest,list);
 router.get('/mostwanted',verifyJWT,isGuest,mostwanted);
-router.get('/',verifyJWT,isGuest,list); //aca hace listado y ademas hace la busqueda por categor
+router.get('/',verifyJWT,isGuest,list); 
 router.post('/',verifyJWT,isGod,create);
 router.put('/:id',verifyJWT,isAdmin,modify);
 router.get('/:id',verifyJWT,isAdmin,detail);
 router.delete('/:id',verifyJWT,isGod,deleted);
-router.get('/:id/pictures',verifyJWT,isAdmin,picturesProduct);//muestra la lista de pictures de un id
-
+router.get('/:id/pictures',verifyJWT,isAdmin,picturesProduct);
 
 module.exports = router;

@@ -7,34 +7,31 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			autoIncrement: true,
 		},
+		product_id:{
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
         img:{
             type: DataTypes.STRING(255),
             allowNull: false,
         },
         description: {
             type: DataTypes.STRING,
-        },
-        gallery_id:{
-            type: DataTypes.INTEGER,
-            allowNull: false,
         }
 	};
 
+	const config = {
+		timestamps: false
+	}
+	
+	const Picture = sequelize.define(alias, cols, config);
 
-	const Picture = sequelize.define(alias, cols);
-    
-	// Equipo.associate = (models) => {
-	// 	Equipo.hasMany(models.Persona, {
-	// 		as: "personaequipo",
-	// 		foreignKey: "equipo_id",
-	// 	});
-	// 	Equipo.belongsToMany(models.Marca, {
-	// 		as: "marcaequipo",
-	// 		through: "equipo_marca",
-	// 		foreignKey: "equipo_id",
-	// 		otherKey: "marca_id",
-	// 	});
-	// };
+	Picture.associate = (models) => {
+		Picture.belongsTo(models.products,{
+			foreignKey: 'product_id',
+			as: 'productPicture',
+		})
+	};
 
 	return Picture;
 };
